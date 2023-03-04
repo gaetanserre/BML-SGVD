@@ -1,0 +1,113 @@
+\documentclass[runningheads,a4paper]{llncs}
+
+\setcounter{tocdepth}{3}
+\usepackage{natbib}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath, amssymb, mathtools, amsthm}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage[pages=some]{background}
+\usepackage[margin=2.8cm]{geometry}
+\usepackage{lipsum}
+\graphicspath{{figures/}}
+\definecolor{MVA}{HTML}{652475}
+
+\newcommand\BackGroundImage[1]{%
+\BgThispage
+\backgroundsetup{
+    scale=1,angle=0,position={current page.north}, hshift=-7.5cm, 
+    vshift=-1.5cm, opacity=1,
+    contents={%
+    \includegraphics[width=5cm]{#1}
+}}}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\Hf}{\mathcal{H}}
+\newcommand{\diff}[2]{\frac{\partial #1}{\partial #2}}
+\DeclarePairedDelimiter{\norm}{\|}{\|}
+\DeclarePairedDelimiter{\pare}{(}{)}
+\DeclarePairedDelimiter{\bra}{\{}{\}}
+\DeclarePairedDelimiter{\sq}{[}{]}
+\renewcommand\qedsymbol{$\blacksquare$}
+
+\begin{document} 
+
+\mainmatter
+\titlerunning{Stein Variational Gradient Descent main ideas}
+\title{Stein Variational Gradient Descent main ideas}
+
+\author{Gaëtan Serré}
+\authorrunning{Serré}
+
+\institute{École Normale Supérieure Paris-Saclay\\
+Master Mathématiques, Vision, Apprentissage\\
+gaetan.serre@ens-paris-saclay.fr}
+
+\toctitle{Stein Variational Gradient Descent main ideas}
+\tocauthor{Gaëtan Serré}
+\maketitle
+
+\BackGroundImage{MVA.pdf}
+
+\section{Goal}
+Given a smooth density $\pi$ supported on $\X \subseteq \R^d$,
+find $\mu$ on $\X$ as close as possible to $\pi$.
+
+\section{Stein framework}
+\paragraph{\bf Stein identity:}
+Let $\A_\pi$ a Stein operator s.t.
+$$
+\A_\pi \phi = \nabla \log \pi(\cdot)^\top \phi(\cdot) + \nabla \cdot \phi(\cdot)
+$$
+with $\phi(x) = [\phi_1(x), ..., \phi_d(x)]^\top$.
+Then, if $\phi$ is in the Stein class f $\pi$ i.e. $\phi(x)\pi(x) = 0$ for all $x \in \partial \X$
+if $\X$ is compact or $\lim_{||x|| \to \infty} \phi(x) \pi(x) = 0$ if $\X = \R^d$, we have:
+\begin{equation}
+  \E_{x \sim \pi}[\A_\pi \phi (x)] = 0
+  \label{eq:stein_id}
+\end{equation}
+\begin{proof}
+  \begin{align*}
+    \E_{x \sim \pi}[\A_\pi \phi (x)] &=
+      \int_\X \pare*{ \nabla \log \pi(\cdot)^\top \phi(\cdot) + \nabla \cdot \phi(\cdot) } \pi(x) dx \\
+    &= \int_\X \nabla \log \pi(\cdot)^\top \phi(\cdot) \pi(x) dx + \int_\X \nabla \cdot \phi(\cdot) \pi(x) dx \\
+    &= \int_\X \nabla \log \pi(\cdot)^\top \phi(\cdot) \pi(x) dx +
+      \int_\X \sum_{k=1}^d \diff{\phi_k}{x_k} \pi(x) dx \\
+    &= \int_\X \nabla \log \pi(\cdot)^\top \phi(\cdot) \pi(x) dx +
+    \sum_{k=1}^d \pare*{ \sq*{\pi(x) \phi_k(x)}_\X - \int_\X \diff{\pi(x)}{x_k} \phi_k(x) dx}\\
+    &= \int_\X \nabla \log \pi(\cdot)^\top \phi(\cdot) \pi(x) dx -
+      \int_\X \sum_{k=1}^d \diff{\pi(x)}{x_k} \phi_k(x) dx\\
+    &= \int_\X \sum_{k=1}^d \diff{\pi(x)}{x_k} \phi_k(x) -
+    \sum_{k=1}^d \diff{\pi(x)}{x_k} \phi_k(x) dx\\
+    &= 0
+  \end{align*}
+\end{proof}
+
+Now, let $\mu$ a smooth density supported on $\X$ different from $\pi$. Now, Eq.~\ref{eq:stein_id} do not hold
+anymore with $x \sim \mu$. However, we can use $\E_{x \sim \mu}[\A_\pi \phi (x)]$ as a discrepancy
+measure between $\mu$ and $\pi$, as its magnitude relates to how different $\mu$ and $\pi$ are
+[\cite{https://doi.org/10.48550/arxiv.1608.04471} \& \cite{https://doi.org/10.48550/arxiv.1704.07520}].
+The objective becomes:
+\begin{equation}
+  \mu^* = \arg\min_{\mu} \: \mathbb{S}(\mu, \pi) =
+    \arg\min_{\mu} \: \max_{\phi \in \Hf} \bra*{ \E_{x \sim \mu}[\A_\pi \phi (x)] }  
+  \label{eq:stein_obj}
+\end{equation}
+As $\mathbb{S}(\mu, \pi) = 0$ iff $\mu = \pi$ and $\mathbb{S}(\mu, \pi) > 0$ otherwise with $\Hf$ sufficiently large.
+The choice of $\Hf$ is therefore crucial. One way to ensure $\Hf$ is both rich enough and computationally tractable
+is to let $\Hf$ be a RKHS.
+
+
+\bibliography{refs}
+\bibliographystyle{plainnat}
+
+
+
+\end{document} 
