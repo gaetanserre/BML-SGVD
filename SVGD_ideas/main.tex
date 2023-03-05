@@ -27,9 +27,10 @@
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\E}{\mathbb{E}}
+\newcommand{\Sr}{\mathbb{S}}
 \newcommand{\X}{\mathcal{X}}
 \newcommand{\A}{\mathcal{A}}
-\newcommand{\Hf}{\mathcal{H}}
+\newcommand{\Hr}{\mathcal{H}}
 \newcommand{\diff}[2]{\frac{\partial #1}{\partial #2}}
 \DeclarePairedDelimiter{\norm}{\|}{\|}
 \DeclarePairedDelimiter{\pare}{(}{)}
@@ -81,11 +82,11 @@ if $\X$ is compact or $\lim_{||x|| \to \infty} \phi(x) \pi(x) = 0$ if $\X = \R^d
     &= \int_\X \nabla \log \pi(\cdot)^\top \phi(\cdot) \pi(x) dx +
       \int_\X \sum_{k=1}^d \diff{\phi_k}{x_k} \pi(x) dx \\
     &= \int_\X \nabla \log \pi(\cdot)^\top \phi(\cdot) \pi(x) dx +
-    \sum_{k=1}^d \pare*{ \sq*{\pi(x) \phi_k(x)}_\X - \int_\X \diff{\pi(x)}{x_k} \phi_k(x) dx}\\
+    \sum_{k=1}^d \pare*{ \sq*{\pi(x) \phi_k(x)}_\X - \int_\X \diff{\pi(x)}{x_k} \phi_k(x) dx} \\
     &= \int_\X \nabla \log \pi(\cdot)^\top \phi(\cdot) \pi(x) dx -
-      \int_\X \sum_{k=1}^d \diff{\pi(x)}{x_k} \phi_k(x) dx\\
+      \int_\X \sum_{k=1}^d \diff{\pi(x)}{x_k} \phi_k(x) dx \\
     &= \int_\X  \pi(x) \sum_{k=1}^d \diff{\log \pi(x)}{x_k}\phi_k(x) -
-    \pi(x) \sum_{k=1}^d \diff{\log \pi(x)}{x_k} \phi_k(x) dx \;\; \text{(log trick)}\\
+    \pi(x) \sum_{k=1}^d \diff{\log \pi(x)}{x_k} \phi_k(x) dx \;\; \text{(log trick)} \\
     &= 0
   \end{align*}
 \end{proof}
@@ -94,16 +95,95 @@ Now, let $\mu$ a smooth density supported on $\X$ different from $\pi$. Now, Eq.
 anymore with $x \sim \mu$. However, we can use $\E_{x \sim \mu}[\A_\pi \phi (x)]$ as a discrepancy
 measure between $\mu$ and $\pi$, as its magnitude relates to how different $\mu$ and $\pi$ are
 (see \cite{https://doi.org/10.48550/arxiv.1608.04471} \& \cite{https://doi.org/10.48550/arxiv.1704.07520}).
-The objective becomes:
+Indeed, if we assume $\phi$ to be in the Stein class of $\mu$ as well (this is mild condition as
+$\pi$ and $\mu$ are two densities on $\X$, one can choose $\phi$ to be in the Stein class
+of all distribution on $\X$. E.g. if $\X = \R^d$, one can pick $\phi(x) = \exp\sq*{-\| x - y \|^2}$),
+we have:
 \begin{equation}
-  \mu^* = \arg\min_{\mu} \: \mathbb{S}(\mu, \pi) =
-    \arg\min_{\mu} \: \max_{\phi \in \Hf} \bra*{ \E_{x \sim \mu}[\A_\pi \phi (x)] }  
+  \begin{split}
+    \E_{x \sim \mu}[\A_\pi \phi (x)] &=
+      \int_\X \pare*{ \nabla \log \pi(x)^\top \phi(x) + \nabla \cdot \phi(x) } \mu(x) dx \\
+    &= \int_\X \nabla \log \pi(x)^\top \phi(x) \mu(x) dx +
+    \sum_{k=1}^d \pare*{ \sq*{\mu(x) \phi_k(x)}_\X - \int_\X \diff{\mu(x)}{x_k} \phi_k(x) dx} \\
+    &= \int_\X  \mu(x) \sum_{k=1}^d \diff{\log \pi(x)}{x_k}\phi_k(x) -
+    \mu(x) \sum_{k=1}^d \diff{\log \mu(x)}{x_k} \phi_k(x) dx \;\; \text{(log trick)} \\
+    &= \int_\X  \mu(x) \sq*{ \sum_{k=1}^d \phi_k(x) \pare*{ \diff{\log \pi(x)}{x_k} - \diff{\log \mu(x)}{x_k}}} dx \\
+    &= \int_\X  \mu(x) \sq*{ \sum_{k=1}^d \phi_k(x) \pare*{ \diff{\log \frac{\pi(x)}{\mu(x)}}{x_k}}} dx.
+  \end{split}
+\end{equation}
+As expected, the scale of $\E_{x \sim \mu}[\A_\pi \phi (x)]$ increases with the distance between $\mu$ and $\pi$.\\
+
+Therefore, one can define an objective to find a density $\mu^*$ close to $\pi$:
+\begin{equation}
+  \mu^* = \arg\min_{\mu} \: \Sr(\mu, \pi) =
+    \arg\min_{\mu} \: \max_{\phi \in \Hr} \bra*{ \E_{x \sim \mu}[\A_\pi \phi (x)] },
   \label{eq:stein_obj}
 \end{equation}
-As $\mathbb{S}(\mu, \pi) = 0$ iff $\mu = \pi$ and $\mathbb{S}(\mu, \pi) > 0$ otherwise with $\Hf$ sufficiently large.
-The choice of $\Hf$ is therefore crucial. One way to ensure it is both rich enough and computationally tractable
-is to let $\Hf$ be a RKHS.
+as $\Sr(\mu, \pi) = 0$ iff $\mu = \pi$ and $\Sr(\mu, \pi) > 0$ otherwise with $\Hr$ sufficiently large.
+The choice of $\Hr$ is therefore crucial. One way to ensure it is both rich enough and computationally tractable
+is to let $\Hr$ be a RKHS.
 
+\subsection{Kernelized Stein Discrepancy}
+Let $\Hr_0$ be a RKHS with a kernel $k(x, x')$ in the Stein class of $\pi$ and $\mu$.
+Let $\Hr = (\Hr^{(1)}_0, \dots, \Hr^{(d)}_0)$. The KSD maximizes $\phi$ in the unit ball of $\Hr$.
+The objective in (\ref{eq:stein_obj}) is then:
+\begin{equation}
+  \Sr(\mu, \pi) =
+    \max_{\phi \in \Hr} \bra*{ \E_{x \sim \mu}[\A_\pi \phi (x)], \; s.t. \; \|\phi\|_{\Hr} \leq 1 }.
+  \label{eq:stein_ksd_obj}
+\end{equation}
+Within this framework, one can show that the optimal solution of (\ref{eq:stein_ksd_obj})
+(see \citep{https://doi.org/10.48550/arxiv.1602.03253,
+      https://doi.org/10.48550/arxiv.1410.2392,
+      https://doi.org/10.48550/arxiv.1602.02964}) is:
+\begin{equation}
+  \phi(x) = \frac{\phi^*(x)}{\|\phi^*\|_{\Hr}}
+    \text{ , where } \phi^*(.) = \E_{x \sim \mu}\sq*{ \A_\pi \otimes k(x, \cdot) }
+                               = \int_\X k(x, \cdot) \nabla \log \pi(x) + \nabla k(x, \cdot) d\mu(x),
+  \label{eq:stein_ksd_sol}        
+\end{equation}
+where $\A_\pi \otimes f(x) = f(x) \nabla \log \pi(x) + \nabla f(x)$, is a variant of Stein operator
+\footnote{J'ai fait la preuve sur papier, je l'écrirai plus tard.}.
+Moreover, $\Sr(\mu, \pi) = \|\phi^*\|_\Hr$.
+
+\section{Link with Kullback-Leibler Divergence}
+Let $T: \X \to \X$, $x \mapsto (I + \gamma \phi)(x)$. One can show that
+(see \cite{https://doi.org/10.48550/arxiv.1608.04471} Theorem 3.1):
+\begin{equation}
+  \nabla_\gamma KL(T_\#\mu || \pi) = -\E_{x \sim \mu}[\A_\pi \phi(x)].
+  \label{eq:grad_kl}
+\end{equation}
+Therefore, using (\ref{eq:stein_ksd_sol}), we know that:
+\begin{equation}
+  \phi^*(.) = \int_\X k(x, \cdot) \nabla \log \pi(x) + \nabla k(x, \cdot) d\mu(x)
+\end{equation}
+minimizes the $\nabla_\gamma KL(T_\#\mu || \pi)$.
+Furthermore, assuming RKHSes $\Hr$ and $\Hr_0$ with kernel $k(x, x')$ in the Stein class of $\pi$ and $\mu$,
+one can show that:
+\begin{equation}
+  \begin{split}
+    P_\mu \nabla \log \frac{\mu}{\pi} (\cdot) &=
+      \int_\X k(x, \cdot) \nabla \log \mu(x) d\mu(x) - \int_\X k(x, \cdot) \nabla \log \pi (x) d\mu(x) \\
+    &= \int_\X k(x, \cdot) \nabla \mu(x) dx - \int_\X k(x, \cdot) \nabla \log \pi (x) d\mu(x) \\
+    &= - \int_\X \nabla k(x, \cdot) d\mu(x) - \int_\X k(x, \cdot) \nabla \log \pi (x) d\mu(x) \\
+    &= - \int_\X k(x, \cdot) \nabla \log \pi (x) + \nabla k(x, \cdot) d\mu(x) \\
+    &= -\phi^*(\cdot)
+  \end{split}
+\end{equation}
+The Stein Variational Gradient Descent (SVGD) algorithm consists
+in an iterative procedure where one apply successive transformations
+to an initial density $\mu_0$ towards
+the "direction" $\phi^*$ that minimizes the gradient of the Kullback-Leibler divergence:
+\begin{equation}
+  \mu_{n+1} = \pare*{ I + \gamma \phi^* }_\# \mu_n = \pare*{ I - \gamma P_\mu \nabla \log \frac{\mu}{\pi} }_\# \mu_n.
+\end{equation}
+
+\section{Not understood yet}
+\begin{itemize}
+  \item $k(x, \cdot)$ in the Stein class of $\pi$ and $\mu$?
+  \item Link with Wasserstein distance?
+  \item Why did they defined so much about their RKHS?
+\end{itemize}
 
 \bibliography{refs}
 \bibliographystyle{plainnat}
