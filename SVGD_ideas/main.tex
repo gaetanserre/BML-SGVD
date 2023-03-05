@@ -84,8 +84,8 @@ if $\X$ is compact or $\lim_{||x|| \to \infty} \phi(x) \pi(x) = 0$ if $\X = \R^d
     \sum_{k=1}^d \pare*{ \sq*{\pi(x) \phi_k(x)}_\X - \int_\X \diff{\pi(x)}{x_k} \phi_k(x) dx}\\
     &= \int_\X \nabla \log \pi(\cdot)^\top \phi(\cdot) \pi(x) dx -
       \int_\X \sum_{k=1}^d \diff{\pi(x)}{x_k} \phi_k(x) dx\\
-    &= \int_\X \sum_{k=1}^d \diff{\pi(x)}{x_k} \phi_k(x) -
-    \sum_{k=1}^d \diff{\pi(x)}{x_k} \phi_k(x) dx\\
+    &= \int_\X  \pi(x) \sum_{k=1}^d \diff{\log \pi(x)}{x_k}\phi_k(x) -
+    \pi(x) \sum_{k=1}^d \diff{\log \pi(x)}{x_k} \phi_k(x) dx \;\; \text{(log trick)}\\
     &= 0
   \end{align*}
 \end{proof}
@@ -93,7 +93,7 @@ if $\X$ is compact or $\lim_{||x|| \to \infty} \phi(x) \pi(x) = 0$ if $\X = \R^d
 Now, let $\mu$ a smooth density supported on $\X$ different from $\pi$. Now, Eq.~\ref{eq:stein_id} do not hold
 anymore with $x \sim \mu$. However, we can use $\E_{x \sim \mu}[\A_\pi \phi (x)]$ as a discrepancy
 measure between $\mu$ and $\pi$, as its magnitude relates to how different $\mu$ and $\pi$ are
-[\cite{https://doi.org/10.48550/arxiv.1608.04471} \& \cite{https://doi.org/10.48550/arxiv.1704.07520}].
+(see \cite{https://doi.org/10.48550/arxiv.1608.04471} \& \cite{https://doi.org/10.48550/arxiv.1704.07520}).
 The objective becomes:
 \begin{equation}
   \mu^* = \arg\min_{\mu} \: \mathbb{S}(\mu, \pi) =
@@ -101,7 +101,7 @@ The objective becomes:
   \label{eq:stein_obj}
 \end{equation}
 As $\mathbb{S}(\mu, \pi) = 0$ iff $\mu = \pi$ and $\mathbb{S}(\mu, \pi) > 0$ otherwise with $\Hf$ sufficiently large.
-The choice of $\Hf$ is therefore crucial. One way to ensure $\Hf$ is both rich enough and computationally tractable
+The choice of $\Hf$ is therefore crucial. One way to ensure it is both rich enough and computationally tractable
 is to let $\Hf$ be a RKHS.
 
 
