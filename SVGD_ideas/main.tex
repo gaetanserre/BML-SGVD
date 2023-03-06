@@ -134,11 +134,7 @@ The objective in (\ref{eq:stein_obj}) is then:
   \label{eq:stein_ksd_obj}
 \end{equation}
 Within this framework, one can show that the optimal solution of (\ref{eq:stein_ksd_obj})
-(see \citep{https://doi.org/10.48550/arxiv.1602.03253,
-      https://doi.org/10.48550/arxiv.1410.2392,
-      https://doi.org/10.48550/arxiv.1602.02964}) is
-      \footnote{J'ai fait la preuve sur papier, je l'écrirai plus tard. 
-      (définir $\mathcal{B}$ et utiliser ineg triangulaire sur $\sca*{\mathcal{B}, f}_\Hr$)}:
+is given by:
 \begin{equation}
   \phi(x) = \frac{\phi^*(x)}{\|\phi^*\|_{\Hr}}
     \text{ , where } \phi^*(.) = \E_{x \sim \mu}\sq*{ \A_\pi \otimes k(x, \cdot) }
@@ -147,6 +143,38 @@ Within this framework, one can show that the optimal solution of (\ref{eq:stein_
 \end{equation}
 where $\A_\pi \otimes f(x) = f(x) \nabla \log \pi(x) + \nabla f(x)$, is a variant of Stein operator.
 Moreover, $\Sr(\mu, \pi) = \|\phi^*\|_\Hr$.
+\begin{proof}
+  We first need to prove that
+  $$
+  \E_{x \sim \mu} \sq*{ \A_\pi f(x) } = \sca*{f, \phi^*}_\Hr, \; \forall f \in \Hr:
+  $$
+  \begin{equation}
+    \begin{split}
+      \sca*{f, \phi^*}_\Hr &= \sum_{l=1}^d \sca*{ f^{(l)},
+        \E_{x \sim \mu}\sq*{ k(x, \cdot) \nabla \log \pi(x)^{(l)} + \nabla k(x, \cdot)^{(l)}} }_{\Hr^0} \\
+        &= \E_{x \sim \mu}\sq*{ \sum_{l=1}^d \sca*{f^{(l)}, k(x, \cdot)
+          \nabla \log \pi(x)^{(l)} + \nabla k(x, \cdot)^{(l)} }_{\Hr^0} } \\
+        &= \E_{x \sim \mu}\sq*{ \sum_{l=1}^d \nabla \log \pi(x)^{(l)}
+          \sca*{ f^{(l)}, k(x, \cdot) }_{\Hr^0} + \sca*{ f^{(l)}, \nabla k(x, \cdot)^{(l)} }_{\Hr^0} } \\
+        &= \E_{x \sim \mu}\sq*{ \sum_{l=1}^d \nabla \log \pi(x)^{(l)} f^{(l)}(x) + \nabla_{x_l} f(x)^{(l)} }
+         \text{ (see \cite{Zhou2008}) } \\
+        &= \E_{x \sim \mu}\sq*{ \nabla \log \pi(x)^\top f(x) + \nabla \cdot f(x) } \\
+        &= \E_{x \sim \mu} \sq*{ \A_\pi f(x) }.
+    \end{split}
+  \end{equation}
+  Moreover, $\sca*{ f, \phi* }_\Hr \leq \norm{f}_\Hr \norm{\phi^*}_\Hr$.
+  Thus,
+  $$
+  \Sr(\mu, \pi) =
+    \max_{f \in \Hr} \bra*{ \E_{x \sim \mu}[\A_\pi f (x)] = \sca*{f, \phi^*}_\Hr, \; s.t. \; \|f\|_{\Hr} \leq 1 }
+    \leq \norm{\phi^*}_\Hr.
+  $$
+  Let $f = \frac{\phi^*}{\norm{\phi^*}_\Hr}$, then $\norm{f}_\Hr = 1$ and
+  $$
+  \E_{x \sim \mu}[\A_\pi \phi (x)] = \sca*{f, \phi^*}_\Hr = \norm{\phi^*}_\Hr,
+  $$
+  ending the proof.
+\end{proof}
 
 \section{Link with Kullback-Leibler Divergence}
 Let $T: \X \to \X$, $x \mapsto (I + \gamma \phi)(x)$. One can show that
@@ -190,6 +218,40 @@ the "direction" $\phi^*$ that minimizes the gradient of the Kullback-Leibler div
 \bibliography{refs}
 \bibliographystyle{plainnat}
 
+\appendix
+\section{Lemmas}
+\begin{lemma}
+  Let two distributions $\mu$ and $\pi$ on $\X \subseteq \R^d$.
+  Let $\phi: \X \to \R^d$ be in the Stein class of $\mu$ and
+  $\A_\pi \phi(x) = \nabla \log \pi(x)^\top \phi(x) + \nabla \cdot \phi(x)$ Then,
+  $$
+  \E_{x \sim \mu}\sq*{ \A_\pi \phi(x) } =
+    \E_{x \sim \mu}\sq*{ \pare*{\nabla \log \pi(x) - \nabla \log \mu(x)}^\top \phi(x) }
+  $$
+  \begin{proof}
+    \begin{align*}
+      \E_{x \sim \mu}\sq*{ \A_\pi \phi(x) } &= \E_{x \sim \mu}\sq*{ \A_\pi \phi(x) - \A_\mu \phi(x) } \\
+      &= \E_{x \sim \mu}\sq*{ \nabla \log \pi(x)^\top \phi(x) - \nabla \cdot \phi(x) -
+      \nabla \log \mu(x)^\top \phi(x) + \nabla \cdot \phi(x) } \\
+      &= \E_{x \sim \mu}\sq*{ \pare*{\nabla \log \pi(x) - \nabla \log \mu(x)}^\top \phi(x) }
+    \end{align*}
+  \end{proof}
+  \label{lem:stein_op}
+\end{lemma}
+
+\begin{lemma}
+  Let two distributions $\mu$ and $\pi$ on $\X \subseteq \R^d$.
+  Let $\phi: \X \to \R$ be in the Stein class of $\mu$ and
+  $\A_\pi \otimes \phi(x) = \phi(x) \nabla \log \pi(x) + \nabla \phi(x)$ Then,
+  $$
+  \E_{x \sim \mu}\sq*{ \A_\pi \otimes \phi(x) } =
+    \E_{x \sim \mu}\sq*{ \pare*{\nabla \log \pi(x) - \nabla \log \mu(x)} \phi(x) }
+  $$
+  \begin{proof}
+    Same proof as Lemma~\ref{lem:stein_op}.
+  \end{proof}
+  \label{lem:stein_op_scalar}
+\end{lemma}
 
 
 \end{document} 
