@@ -36,13 +36,14 @@
 \DeclarePairedDelimiter{\pare}{(}{)}
 \DeclarePairedDelimiter{\bra}{\{}{\}}
 \DeclarePairedDelimiter{\sq}{[}{]}
+\DeclarePairedDelimiter{\sca}{\langle}{\rangle}
 \renewcommand\qedsymbol{$\blacksquare$}
 
 \begin{document} 
 
 \mainmatter
-\titlerunning{Stein Variational Gradient Descent main ideas}
-\title{Stein Variational Gradient Descent main ideas}
+\titlerunning{Stein Variational Gradient Descent: Main ideas}
+\title{Stein Variational Gradient Descent: Main ideas}
 
 \author{Gaëtan Serré}
 \authorrunning{Serré}
@@ -51,7 +52,7 @@
 Master Mathématiques, Vision, Apprentissage\\
 gaetan.serre@ens-paris-saclay.fr}
 
-\toctitle{Stein Variational Gradient Descent main ideas}
+\toctitle{Stein Variational Gradient Descent: Main ideas}
 \tocauthor{Gaëtan Serré}
 \maketitle
 
@@ -68,7 +69,7 @@ $$
 \A_\pi \phi = \nabla \log \pi(\cdot)^\top \phi(\cdot) + \nabla \cdot \phi(\cdot)
 $$
 with $\phi(x) = [\phi_1(x), ..., \phi_d(x)]^\top$.
-Then, if $\phi$ is in the Stein class f $\pi$ i.e. $\phi(x)\pi(x) = 0$ for all $x \in \partial \X$
+Then, if $\phi$ is in the Stein class of $\pi$ i.e. $\phi(x)\pi(x) = 0$ for all $x \in \partial \X$
 if $\X$ is compact or $\lim_{||x|| \to \infty} \phi(x) \pi(x) = 0$ if $\X = \R^d$, we have:
 \begin{equation}
   \E_{x \sim \pi}[\A_\pi \phi (x)] = 0
@@ -111,7 +112,7 @@ we have:
     &= \int_\X  \mu(x) \sq*{ \sum_{k=1}^d \phi_k(x) \pare*{ \diff{\log \frac{\pi(x)}{\mu(x)}}{x_k}}} dx.
   \end{split}
 \end{equation}
-As expected, the scale of $\E_{x \sim \mu}[\A_\pi \phi (x)]$ increases with the distance between $\mu$ and $\pi$.\\
+As expected, the scale of $\E_{x \sim \mu}[\A_\pi \phi (x)]$ increases w.r.t. the difference between $\mu$ and $\pi$.\\
 
 Therefore, one can define an objective to find a density $\mu^*$ close to $\pi$:
 \begin{equation}
@@ -123,7 +124,7 @@ as $\Sr(\mu, \pi) = 0$ iff $\mu = \pi$ and $\Sr(\mu, \pi) > 0$ otherwise with $\
 The choice of $\Hr$ is therefore crucial. One way to ensure it is both rich enough and computationally tractable
 is to let $\Hr$ be a RKHS.
 
-\subsection{Kernelized Stein Discrepancy}
+\subsection{Kernelized Stein Discrepancy}\label{sec:ksd}
 Let $\Hr_0$ be a RKHS with a kernel $k(x, x')$ in the Stein class of $\pi$ and $\mu$.
 Let $\Hr = (\Hr^{(1)}_0, \dots, \Hr^{(d)}_0)$. The KSD maximizes $\phi$ in the unit ball of $\Hr$.
 The objective in (\ref{eq:stein_obj}) is then:
@@ -135,15 +136,16 @@ The objective in (\ref{eq:stein_obj}) is then:
 Within this framework, one can show that the optimal solution of (\ref{eq:stein_ksd_obj})
 (see \citep{https://doi.org/10.48550/arxiv.1602.03253,
       https://doi.org/10.48550/arxiv.1410.2392,
-      https://doi.org/10.48550/arxiv.1602.02964}) is:
+      https://doi.org/10.48550/arxiv.1602.02964}) is
+      \footnote{J'ai fait la preuve sur papier, je l'écrirai plus tard. 
+      (définir $\mathcal{B}$ et utiliser ineg triangulaire sur $\sca*{\mathcal{B}, f}_\Hr$)}:
 \begin{equation}
   \phi(x) = \frac{\phi^*(x)}{\|\phi^*\|_{\Hr}}
     \text{ , where } \phi^*(.) = \E_{x \sim \mu}\sq*{ \A_\pi \otimes k(x, \cdot) }
                                = \int_\X k(x, \cdot) \nabla \log \pi(x) + \nabla k(x, \cdot) d\mu(x),
   \label{eq:stein_ksd_sol}        
 \end{equation}
-where $\A_\pi \otimes f(x) = f(x) \nabla \log \pi(x) + \nabla f(x)$, is a variant of Stein operator
-\footnote{J'ai fait la preuve sur papier, je l'écrirai plus tard.}.
+where $\A_\pi \otimes f(x) = f(x) \nabla \log \pi(x) + \nabla f(x)$, is a variant of Stein operator.
 Moreover, $\Sr(\mu, \pi) = \|\phi^*\|_\Hr$.
 
 \section{Link with Kullback-Leibler Divergence}
@@ -153,13 +155,13 @@ Let $T: \X \to \X$, $x \mapsto (I + \gamma \phi)(x)$. One can show that
   \nabla_\gamma KL(T_\#\mu || \pi) = -\E_{x \sim \mu}[\A_\pi \phi(x)].
   \label{eq:grad_kl}
 \end{equation}
-Therefore, using (\ref{eq:stein_ksd_sol}), we know that:
+Therefore, assuming $\phi \in \Hr$ with $\Hr$ as defined as in Section~\ref{sec:ksd},
+using (\ref{eq:stein_ksd_sol}), we know that:
 \begin{equation}
   \phi^*(.) = \int_\X k(x, \cdot) \nabla \log \pi(x) + \nabla k(x, \cdot) d\mu(x)
 \end{equation}
-minimizes the $\nabla_\gamma KL(T_\#\mu || \pi)$.
-Furthermore, assuming RKHSes $\Hr$ and $\Hr_0$ with kernel $k(x, x')$ in the Stein class of $\pi$ and $\mu$,
-one can show that:
+minimizes $\nabla_\gamma KL(T_\#\mu || \pi)$.
+Furthermore, one can show that:
 \begin{equation}
   \begin{split}
     P_\mu \nabla \log \frac{\mu}{\pi} (\cdot) &=
