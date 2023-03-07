@@ -59,7 +59,7 @@ gaetan.serre@ens-paris-saclay.fr}
 \BackGroundImage{MVA.pdf}
 
 \section{Goal}
-Given a smooth density $\pi$ supported on $\X \subseteq \R^d$,
+Given a smooth probability density $\pi$ supported on $\X \subseteq \R^d$,
 find $\mu$ on $\X$ as close as possible to $\pi$.
 
 \section{Stein framework}
@@ -83,7 +83,7 @@ if $\X$ is compact or $\lim_{||x|| \to \infty} \phi(x) \mu(x) = \vec{0}$ if $\X 
     &= \int_\X \nabla \log \mu(\cdot)^\top \phi(\cdot) \mu(x) dx +
       \int_\X \sum_{k=1}^d \diff{\phi_k}{x_k} \mu(x) dx \\
     &= \int_\X \nabla \log \mu(\cdot)^\top \phi(\cdot) \mu(x) dx +
-    \sum_{k=1}^d \pare*{ \sq*{\mu(x) \phi_k(x)}_\X - \int_\X \diff{\mu(x)}{x_k} \phi_k(x) dx} \\
+    \sum_{k=1}^d \pare*{\int_{\partial X}(\pi(x) \phi_k(x)) \cdot n dn - \int_\X \diff{\mu(x)}{x_k} \phi_k(x) dx} \\
     &= \int_\X \nabla \log \mu(\cdot)^\top \phi(\cdot) \mu(x) dx -
       \int_\X \sum_{k=1}^d \diff{\mu(x)}{x_k} \phi_k(x) dx \\
     &= \int_\X  \mu(x) \sum_{k=1}^d \diff{\log \mu(x)}{x_k}\phi_k(x) -
@@ -102,7 +102,7 @@ Indeed, we have:
     \E_{x \sim \mu}[\A_\pi \phi (x)] &=
       \int_\X \pare*{ \nabla \log \pi(x)^\top \phi(x) + \nabla \cdot \phi(x) } \mu(x) dx \\
     &= \int_\X \nabla \log \pi(x)^\top \phi(x) \mu(x) dx +
-    \sum_{k=1}^d \pare*{ \sq*{\mu(x) \phi_k(x)}_\X - \int_\X \diff{\mu(x)}{x_k} \phi_k(x) dx} \\
+    \sum_{k=1}^d \pare*{ \int_{\partial X}(\pi(x) \phi_k(x)) \cdot n dn - \int_\X \diff{\mu(x)}{x_k} \phi_k(x) dx} \\
     &= \int_\X  \mu(x) \sum_{k=1}^d \diff{\log \pi(x)}{x_k}\phi_k(x) -
     \mu(x) \sum_{k=1}^d \diff{\log \mu(x)}{x_k} \phi_k(x) dx \;\; \text{(log trick)} \\
     &= \int_\X  \mu(x) \sq*{ \sum_{k=1}^d \phi_k(x) \pare*{ \diff{\log \pi(x)}{x_k} - \diff{\log \mu(x)}{x_k}}} dx \\
