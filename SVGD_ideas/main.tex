@@ -64,42 +64,39 @@ find $\mu$ on $\X$ as close as possible to $\pi$.
 
 \section{Stein framework}
 \paragraph{\bf Stein identity:}
-Let $\A_\pi$ a Stein operator s.t.
+Let $\A_\mu$ a Stein operator s.t.
 $$
-\A_\pi \phi = \nabla \log \pi(\cdot)^\top \phi(\cdot) + \nabla \cdot \phi(\cdot)
+\A_\mu \phi = \nabla \log \mu(\cdot)^\top \phi(\cdot) + \nabla \cdot \phi(\cdot)
 $$
 with $\phi(x) = [\phi_1(x), ..., \phi_d(x)]^\top$.
-Then, if $\phi$ is in the Stein class of $\pi$ i.e. $\phi(x)\pi(x) = 0$ for all $x \in \partial \X$
-if $\X$ is compact or $\lim_{||x|| \to \infty} \phi(x) \pi(x) = 0$ if $\X = \R^d$, we have:
+Then, if $\phi$ is in the Stein class of $\mu$ i.e. $\phi(x)\mu(x) = \vec{0}$ for all $x \in \partial \X$
+if $\X$ is compact or $\lim_{||x|| \to \infty} \phi(x) \mu(x) = \vec{0}$ if $\X = \R^d$, we have:
 \begin{equation}
-  \E_{x \sim \pi}[\A_\pi \phi (x)] = 0
+  \E_{x \sim \pi}[\A_\mu \phi (x)] = 0
   \label{eq:stein_id}
 \end{equation}
 \begin{proof}
   \begin{align*}
-    \E_{x \sim \pi}[\A_\pi \phi (x)] &=
-      \int_\X \pare*{ \nabla \log \pi(\cdot)^\top \phi(\cdot) + \nabla \cdot \phi(\cdot) } \pi(x) dx \\
-    &= \int_\X \nabla \log \pi(\cdot)^\top \phi(\cdot) \pi(x) dx + \int_\X \nabla \cdot \phi(\cdot) \pi(x) dx \\
-    &= \int_\X \nabla \log \pi(\cdot)^\top \phi(\cdot) \pi(x) dx +
-      \int_\X \sum_{k=1}^d \diff{\phi_k}{x_k} \pi(x) dx \\
-    &= \int_\X \nabla \log \pi(\cdot)^\top \phi(\cdot) \pi(x) dx +
-    \sum_{k=1}^d \pare*{ \sq*{\pi(x) \phi_k(x)}_\X - \int_\X \diff{\pi(x)}{x_k} \phi_k(x) dx} \\
-    &= \int_\X \nabla \log \pi(\cdot)^\top \phi(\cdot) \pi(x) dx -
-      \int_\X \sum_{k=1}^d \diff{\pi(x)}{x_k} \phi_k(x) dx \\
-    &= \int_\X  \pi(x) \sum_{k=1}^d \diff{\log \pi(x)}{x_k}\phi_k(x) -
-    \pi(x) \sum_{k=1}^d \diff{\log \pi(x)}{x_k} \phi_k(x) dx \;\; \text{(log trick)} \\
+    \E_{x \sim \mu}[\A_\mu \phi (x)] &=
+      \int_\X \pare*{ \nabla \log \mu(\cdot)^\top \phi(\cdot) + \nabla \cdot \phi(\cdot) } \mu(x) dx \\
+    &= \int_\X \nabla \log \mu(\cdot)^\top \phi(\cdot) \mu(x) dx + \int_\X \nabla \cdot \phi(\cdot) \mu(x) dx \\
+    &= \int_\X \nabla \log \mu(\cdot)^\top \phi(\cdot) \mu(x) dx +
+      \int_\X \sum_{k=1}^d \diff{\phi_k}{x_k} \mu(x) dx \\
+    &= \int_\X \nabla \log \mu(\cdot)^\top \phi(\cdot) \mu(x) dx +
+    \sum_{k=1}^d \pare*{ \sq*{\mu(x) \phi_k(x)}_\X - \int_\X \diff{\mu(x)}{x_k} \phi_k(x) dx} \\
+    &= \int_\X \nabla \log \mu(\cdot)^\top \phi(\cdot) \mu(x) dx -
+      \int_\X \sum_{k=1}^d \diff{\mu(x)}{x_k} \phi_k(x) dx \\
+    &= \int_\X  \mu(x) \sum_{k=1}^d \diff{\log \mu(x)}{x_k}\phi_k(x) -
+    \mu(x) \sum_{k=1}^d \diff{\log \mu(x)}{x_k} \phi_k(x) dx \;\; \text{(log trick)} \\
     &= 0
   \end{align*}
 \end{proof}
 
-Now, let $\mu$ a smooth density supported on $\X$ different from $\pi$. Now, Eq.~\ref{eq:stein_id} do not hold
-anymore with $x \sim \mu$. However, we can use $\E_{x \sim \mu}[\A_\pi \phi (x)]$ as a discrepancy
+Now, let $\pi$ a smooth density supported on $\X$ different from $\mu$. Now, Eq.~\ref{eq:stein_id} do not hold
+anymore with $\A_\pi$. However, we can use $\E_{x \sim \mu}[\A_\pi \phi (x)]$ as a discrepancy
 measure between $\mu$ and $\pi$, as its magnitude relates to how different $\mu$ and $\pi$ are
 (see \cite{https://doi.org/10.48550/arxiv.1608.04471} \& \cite{https://doi.org/10.48550/arxiv.1704.07520}).
-Indeed, if we assume $\phi$ to be in the Stein class of $\mu$ as well (this is mild condition as
-$\pi$ and $\mu$ are two densities on $\X$, one can choose $\phi$ to be in the Stein class
-of all distribution on $\X$. E.g. if $\X = \R^d$, one can pick $\phi(x) = \exp\sq*{-\| x - y \|^2}$),
-we have:
+Indeed, we have:
 \begin{equation}
   \begin{split}
     \E_{x \sim \mu}[\A_\pi \phi (x)] &=
@@ -125,7 +122,7 @@ The choice of $\Hr$ is therefore crucial. One way to ensure it is both rich enou
 is to let $\Hr$ be a RKHS.
 
 \subsection{Kernelized Stein Discrepancy}\label{sec:ksd}
-Let $\Hr_0$ be a RKHS with a kernel $k(x, x')$ in the Stein class of $\pi$ and $\mu$.
+Let $\Hr_0$ be a RKHS with a kernel $k(x, x')$ in the Stein class of $\mu$.
 Let $\Hr = (\Hr^{(1)}_0, \dots, \Hr^{(d)}_0)$. The KSD maximizes $\phi$ in the unit ball of $\Hr$.
 The objective in (\ref{eq:stein_obj}) is then:
 \begin{equation}
@@ -142,6 +139,7 @@ is given by:
   \label{eq:stein_ksd_sol}        
 \end{equation}
 where $\A_\pi \otimes f(x) = f(x) \nabla \log \pi(x) + \nabla f(x)$, is a variant of Stein operator.
+We also know that $\phi^*$ is in the Stein class of $\mu$ as $k$ is.
 Moreover, $\Sr(\mu, \pi) = \|\phi^*\|_\Hr$.
 \begin{proof}
   We first need to prove that
@@ -210,7 +208,6 @@ the "direction" $\phi^*$ that minimizes the gradient of the Kullback-Leibler div
 
 \section{Not understood yet}
 \begin{itemize}
-  \item $k(x, \cdot)$ in the Stein class of $\pi$ and $\mu$?
   \item Link with Wasserstein distance?
   \item Why did they defined so much about their RKHS?
 \end{itemize}
