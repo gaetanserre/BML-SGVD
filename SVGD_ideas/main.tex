@@ -32,6 +32,7 @@
 \newcommand{\A}{\mathcal{A}}
 \newcommand{\Hr}{\mathcal{H}}
 \newcommand{\diff}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\dr}{\mathrm{d}}
 \DeclarePairedDelimiter{\norm}{\|}{\|}
 \DeclarePairedDelimiter{\pare}{(}{)}
 \DeclarePairedDelimiter{\bra}{\{}{\}}
@@ -45,15 +46,15 @@
 \titlerunning{Stein Variational Gradient Descent: Main ideas}
 \title{Stein Variational Gradient Descent: Main ideas}
 
-\author{Gaëtan Serré}
-\authorrunning{Serré}
+\author{Gaëtan Serré and Perceval Béja-Battais}
+\authorrunning{Serré and Béja-Battais}
 
 \institute{École Normale Supérieure Paris-Saclay\\
 Master Mathématiques, Vision, Apprentissage\\
-gaetan.serre@ens-paris-saclay.fr}
+\{gaetan.serre, perceval.beja-battais\}@ens-paris-saclay.fr}
 
 \toctitle{Stein Variational Gradient Descent: Main ideas}
-\tocauthor{Gaëtan Serré}
+\tocauthor{Gaëtan Serré and Perceval Béja-Battais}
 \maketitle
 
 \BackGroundImage{MVA.pdf}
@@ -78,16 +79,16 @@ if $\X$ is compact or $\lim_{||x|| \to \infty} \phi(x)\pi(x) = \vec{0}$ if $\X =
 \begin{proof}
   \begin{align*}
     \E_{x \sim \mu}[\A_\mu \phi (x)] &=
-      \int_\X \pare*{ \nabla \log \mu(\cdot)^\top \phi(\cdot) + \nabla \cdot \phi(\cdot) } \mu(x) dx \\
-    &= \int_\X \nabla \log \mu(\cdot)^\top \phi(\cdot) \mu(x) dx + \int_\X \nabla \cdot \phi(\cdot) \mu(x) dx \\
-    &= \int_\X \nabla \log \mu(\cdot)^\top \phi(\cdot) \mu(x) dx +
-      \int_\X \sum_{k=1}^d \diff{\phi_k}{x_k} \mu(x) dx \\
-    &= \int_\X \nabla \log \mu(\cdot)^\top \phi(\cdot) \mu(x) dx +
-    \sum_{k=1}^d \pare*{\int_{\partial X}(\pi(x) \phi_k(x)) \cdot n dn - \int_\X \diff{\mu(x)}{x_k} \phi_k(x) dx} \\
-    &= \int_\X \nabla \log \mu(\cdot)^\top \phi(\cdot) \mu(x) dx -
-      \int_\X \sum_{k=1}^d \diff{\mu(x)}{x_k} \phi_k(x) dx \\
+      \int_\X \pare*{ \nabla \log \mu(\cdot)^\top \phi(\cdot) + \nabla \cdot \phi(\cdot) } \mu(x) \dr x \\
+    &= \int_\X \nabla \log \mu(\cdot)^\top \phi(\cdot) \mu(x) \dr x + \int_\X \nabla \cdot \phi(\cdot) \mu(x) \dr x \\
+    &= \int_\X \nabla \log \mu(\cdot)^\top \phi(\cdot) \mu(x) \dr x +
+      \int_\X \sum_{k=1}^d \diff{\phi_k}{x_k} \mu(x) \dr x \\
+    &= \int_\X \nabla \log \mu(\cdot)^\top \phi(\cdot) \mu(x) \dr x +
+    \sum_{k=1}^d \pare*{\int_{\partial X}\pare*{\pi(x) \phi_k(x)} \cdot n \dr n - \int_\X \diff{\mu(x)}{x_k} \phi_k(x) \dr x} \\
+    &= \int_\X \nabla \log \mu(\cdot)^\top \phi(\cdot) \mu(x) \dr x -
+      \int_\X \sum_{k=1}^d \diff{\mu(x)}{x_k} \phi_k(x) \dr x \\
     &= \int_\X  \mu(x) \sum_{k=1}^d \diff{\log \mu(x)}{x_k}\phi_k(x) -
-    \mu(x) \sum_{k=1}^d \diff{\log \mu(x)}{x_k} \phi_k(x) dx \;\; \text{(log trick)} \\
+    \mu(x) \sum_{k=1}^d \diff{\log \mu(x)}{x_k} \phi_k(x) \dr x \;\; \text{(log trick)} \\
     &= 0
   \end{align*}
 \end{proof}
@@ -100,19 +101,19 @@ Indeed, we have:
 \begin{equation}
   \begin{split}
     \E_{x \sim \mu}[\A_\pi \phi (x)] &=
-      \int_\X \pare*{ \nabla \log \pi(x)^\top \phi(x) + \nabla \cdot \phi(x) } \mu(x) dx \\
-    &= \int_\X \nabla \log \pi(x)^\top \phi(x) \mu(x) dx +
-    \sum_{k=1}^d \pare*{ \mathcal{R}_k - \int_\X \diff{\mu(x)}{x_k} \phi_k(x) dx} \\
+      \int_\X \pare*{ \nabla \log \pi(x)^\top \phi(x) + \nabla \cdot \phi(x) } \mu(x) \dr x \\
+    &= \int_\X \nabla \log \pi(x)^\top \phi(x) \mu(x) \dr x +
+    \sum_{k=1}^d \pare*{ \mathcal{R}_k - \int_\X \diff{\mu(x)}{x_k} \phi_k(x) \dr x} \\
     &= \sum_{k=1}^d \mathcal{R}_k +
       \int_\X  \mu(x) \sum_{k=1}^d \diff{\log \pi(x)}{x_k}\phi_k(x) -
-    \mu(x) \sum_{k=1}^d \diff{\log \mu(x)}{x_k} \phi_k(x) dx \;\; \text{(log trick)} \\
+    \mu(x) \sum_{k=1}^d \diff{\log \mu(x)}{x_k} \phi_k(x) \dr x \;\; \text{(log trick)} \\
     &= \sum_{k=1}^d \mathcal{R}_k +
-      \sum_{k=1}^d \sq*{\mu(x) \phi_k(x)}_\X + \int_\X  \mu(x) \sq*{ \sum_{k=1}^d \phi_k(x) \pare*{ \diff{\log \pi(x)}{x_k} - \diff{\log \mu(x)}{x_k}}} dx \\
+      \sum_{k=1}^d \sq*{\mu(x) \phi_k(x)}_\X + \int_\X  \mu(x) \sq*{ \sum_{k=1}^d \phi_k(x) \pare*{ \diff{\log \pi(x)}{x_k} - \diff{\log \mu(x)}{x_k}}} \dr x \\
     &= \sum_{k=1}^d \mathcal{R}_k +
-      \sum_{k=1}^d \sq*{\mu(x) \phi_k(x)}_\X + \int_\X  \mu(x) \sq*{ \sum_{k=1}^d \phi_k(x) \pare*{ \diff{\log \frac{\pi(x)}{\mu(x)}}{x_k}}} dx,
+      \sum_{k=1}^d \sq*{\mu(x) \phi_k(x)}_\X + \int_\X  \mu(x) \sq*{ \sum_{k=1}^d \phi_k(x) \pare*{ \diff{\log \frac{\pi(x)}{\mu(x)}}{x_k}}} \dr x,
   \end{split}
 \end{equation}
-Where $\mathcal{R}_k = \int_{\partial X}(\pi(x) \phi_k(x)) \cdot n dn$
+Where $\mathcal{R}_k = \int_{\partial X}\pare*{\pi(x) \phi_k(x)} \cdot n \dr n$
 is the first term of the integration by parts.
 As expected, the scale of $\E_{x \sim \mu}[\A_\pi \phi (x)]$ increases w.r.t. the difference between $\mu$ and $\pi$.\\
 
@@ -140,7 +141,7 @@ is given by:
 \begin{equation}
   \phi(x) = \frac{\phi^*(x)}{\|\phi^*\|_{\Hr}}
     \text{ , where } \phi^*(.) = \E_{x \sim \mu}\sq*{ \A_\pi \otimes k(x, \cdot) }
-                               = \int_\X k(x, \cdot) \nabla \log \pi(x) + \nabla k(x, \cdot) d\mu(x),
+                               = \int_\X k(x, \cdot) \nabla \log \pi(x) + \nabla k(x, \cdot) \dr \mu(x),
   \label{eq:stein_ksd_sol}        
 \end{equation}
 where $\A_\pi \otimes f(x) = f(x) \nabla \log \pi(x) + \nabla f(x)$, is a variant of Stein operator.
@@ -183,13 +184,13 @@ Moreover, $\Sr(\mu, \pi) = \|\phi^*\|_\Hr$.
 Let $T: \X \to \X$, $x \mapsto (I + \gamma \phi)(x)$. One can show that
 (see \cite{https://doi.org/10.48550/arxiv.1608.04471} Theorem 3.1):
 \begin{equation}
-  \nabla_\gamma KL(T_\#\mu || \pi) = -\E_{x \sim \mu}[\A_\pi \phi(x)].
+  \nabla_\gamma KL(T_\#\mu \| \pi) = -\E_{x \sim \mu}[\A_\pi \phi(x)].
   \label{eq:grad_kl}
 \end{equation}
 Therefore, assuming $\phi \in \Hr$ with $\Hr$ as defined as in Section~\ref{sec:ksd},
 using (\ref{eq:stein_ksd_sol}), we know that:
 \begin{equation}
-  \phi^*(.) = \int_\X k(x, \cdot) \nabla \log \pi(x) + \nabla k(x, \cdot) d\mu(x)
+  \phi^*(.) = \int_\X k(x, \cdot) \nabla \log \pi(x) + \nabla k(x, \cdot) \dr \mu(x)
 \end{equation}
 minimizes $\nabla_\gamma KL(T_\#\mu || \pi)$.
 Furthermore, if $k$ is also in the Stein class of $\mu$ (this is mild condition as
@@ -199,10 +200,10 @@ one can show that:
 \begin{equation}
   \begin{split}
     P_\mu \nabla \log \frac{\mu}{\pi} (\cdot) &=
-      \int_\X k(x, \cdot) \nabla \log \mu(x) d\mu(x) - \int_\X k(x, \cdot) \nabla \log \pi (x) d\mu(x) \\
-    &= \int_\X k(x, \cdot) \nabla \mu(x) dx - \int_\X k(x, \cdot) \nabla \log \pi (x) d\mu(x) \\
-    &= - \int_\X \nabla k(x, \cdot) d\mu(x) - \int_\X k(x, \cdot) \nabla \log \pi (x) d\mu(x) \\
-    &= - \int_\X k(x, \cdot) \nabla \log \pi (x) + \nabla k(x, \cdot) d\mu(x) \\
+      \int_\X k(x, \cdot) \nabla \log \mu(x) \dr \mu(x) - \int_\X k(x, \cdot) \nabla \log \pi (x) \dr \mu(x) \\
+    &= \int_\X k(x, \cdot) \nabla \mu(x) \dr x - \int_\X k(x, \cdot) \nabla \log \pi (x) \dr \mu(x) \\
+    &= - \int_\X \nabla k(x, \cdot) \dr \mu(x) - \int_\X k(x, \cdot) \nabla \log \pi (x) \dr \mu(x) \\
+    &= - \int_\X k(x, \cdot) \nabla \log \pi (x) + \nabla k(x, \cdot) \dr \mu(x) \\
     &= -\phi^*(\cdot)
   \end{split}
 \end{equation}
@@ -258,23 +259,67 @@ the "direction" $\phi^*$ that minimizes the gradient of the Kullback-Leibler div
   \label{lem:stein_op_scalar}
 \end{lemma}
 
-\section{Detailed proofs}
+\section{Propositions}
 \begin{proposition}
   Let $\Hr_0$ the RKHS of continuous function on $\X$ with kernel
   $k(\cdot, \cdot)$ and $\Hr = (\Hr_0^{(1)}, \dots, \Hr_0^{(d)})$.
-  If $\int_\X k(x,x) d\mu(x) < \infty$, then $\Hr \subset L^2(\mu)$.
+  If $\int_\X k(x,x) \dr \mu(x) < \infty$, then $\Hr \subset L^2(\mu)$.
 
   \begin{proof}
-    We want to prove that, $\forall f \in \Hr$, $\int_\X f(x)^2 d\mu(x) < \infty$.
+    We want to prove that, $\forall f \in \Hr$, $\int_\X f(x)^2 \dr \mu(x) < \infty$.
     \begin{align*}
-      \int_\X f(x)^2 d\mu(x) &= \int_\X \sum_{l=1}^d \sca*{ f^{(l)}, k(x, \cdot) }^2_{\Hr_0} d\mu(x) \\
-      &\leq \sum_{l=1}^d \int_\X \norm*{f^{(l)}}^2_{\Hr_0} \norm*{k(x, \cdot)}^2_{\Hr_0} d\mu(x)
+      \int_\X f(x)^2 \dr \mu(x) &= \int_\X \sum_{l=1}^d \sca*{ f^{(l)}, k(x, \cdot) }^2_{\Hr_0} \dr \mu(x) \\
+      &\leq \sum_{l=1}^d \int_\X \norm*{f^{(l)}}^2_{\Hr_0} \norm*{k(x, \cdot)}^2_{\Hr_0} \dr \mu(x)
         \text{ (by C.S)} \\
-      &= \sum_{l=1}^d \norm*{f^{(l)}}^2_{\Hr_0} \int_\X \norm*{k(x, \cdot)}^2_{\Hr_0} d\mu(x) \\
-      &= \sum_{l=1}^d \norm*{f^{(l)}}^2_{\Hr_0} \int_\X \sca*{k(x, \cdot), k(x, \cdot)}_{\Hr_0} d\mu(x) \\
-      &= \sum_{l=1}^d \norm*{f^{(l)}}^2_{\Hr_0} \int_\X k(x, x) d\mu(x)
+      &= \sum_{l=1}^d \norm*{f^{(l)}}^2_{\Hr_0} \int_\X \norm*{k(x, \cdot)}^2_{\Hr_0} \dr \mu(x) \\
+      &= \sum_{l=1}^d \norm*{f^{(l)}}^2_{\Hr_0} \int_\X \sca*{k(x, \cdot), k(x, \cdot)}_{\Hr_0} \dr \mu(x) \\
+      &= \sum_{l=1}^d \norm*{f^{(l)}}^2_{\Hr_0} \int_\X k(x, x) \dr \mu(x)
         \text{ (by propriety of the RKHS)} \\
-      &< \infty \text{, as } \int_\X k(x, x) d\mu(x) < \infty.
+      &< \infty \text{, as } \int_\X k(x, x) \dr \mu(x) < \infty.
+    \end{align*}
+  \end{proof}
+\end{proposition}
+
+\begin{definition}
+  The SGVD gradient flow is defined as the flow induced by the continuity equation:
+  \begin{equation}
+  \diff{\mu_t}{t} \nabla \cdot (\mu_t v_t) = 0 \text{, for } v_t = -P_{\mu_t} \nabla \log \frac{\mu_t}{\pi}.
+  \label{eq:continuity}
+  \end{equation}
+\end{definition}
+
+\begin{proposition}
+  The time derivative (or dissipation) of the KL along the SGVD flow is given by:
+  $$
+  \diff{KL(\mu_t \| \pi)}{t} = -\norm*{S_{\mu_t} \nabla \log \frac{\mu_t}{\pi}}_\Hr^2.
+  $$
+  \begin{proof}
+    The time derivative of the KL writes:
+    \begin{align*}
+      \diff{KL(\mu_t \| \pi)}{t} &= \diff{ }{t} \int_\X \log \frac{\mu_t(x)}{\pi(x)} \dr \mu_t(x) \\
+      &= \int_\X \diff{\mu_t(x)}{t} \log \frac{\mu_t(x)}{\pi(x)} \dr x
+        + \int_\X \mu_t(x) \diff{\log \frac{\mu_t(x)}{\pi(x)}}{t} \dr x \\
+      &= \int_\X \diff{\mu_t(x)}{t} \log \frac{\mu_t(x)}{\pi(x)} \dr x
+        + \int_\X \mu_t(x) \diff{\log \mu_t(x)}{t} \dr x \\
+      &= \int_\X \diff{\mu_t(x)}{t} \log \frac{\mu_t(x)}{\pi(x)} \dr x
+        + \int_\X \mu_t(x) \frac{\diff{\mu_t(x)}{t}}{\mu_t(x)} \dr x \\
+      &= \int_\X \diff{\mu_t(x)}{t} \log \frac{\mu_t(x)}{\pi(x)} \dr x
+        + \int_\X \diff{\mu_t(x)}{t} \dr x \\
+      &= \int_\X \diff{\mu_t(x)}{t} \log \frac{\mu_t(x)}{\pi(x)} \dr x
+     , \pare*{\text{ $\mu_t$ is a probability measure, so } \forall t, \int_\X \dr \mu_t(x) = 1}
+    \end{align*}
+    Furthermore, as $\mu_t$ satisfies the continuity equation~\eqref{eq:continuity}, we have:
+    \begin{align*}
+      \diff{KL(\mu_t \| \pi)}{t} &= -\int_\X \nabla \cdot (\mu_t(x) v_t(x)) \log \frac{\mu_t(x)}{\pi(x)} \dr x \\
+      &= -\sum_{l=1}^d \int_\X \diff{\mu_t(x) v_t(x)}{x_l} \log \frac{\mu_t(x)}{\pi(x)} \dr x \\
+      &= -\int_{\partial X} \pare* {\mu_t(x) v_t(x) \log \frac{\mu_t(x)}{\pi(x)}} \cdot n \dr n
+        + \sum_{l=1}^d \int_\X \mu_t(x) v_t(x) \diff{\log \frac{\mu_t(x)}{\pi(x)}}{x_l} \dr x \\
+      \text{The first term cancels }& \text{as probability densities tends to zero on the boundary (un peu fumeux).} \\
+      &= \int_\X v_t(x) \nabla \log \frac{\mu_t(x)}{\pi(x)} \dr \mu_t(x) \\
+      &= \sca*{v_t, \nabla \log \frac{\mu_t}{\pi}}_{L^2(\mu_t)} \\
+      &= \sca*{\iota^* v_t, \iota^* \nabla \log \frac{\mu_t}{\pi}}_{\Hr} \\
+      &= \sca*{-\iota^* \iota S_{\mu_t} \nabla \log \frac{\mu_t}{\pi}, S_{\mu_t} \nabla \log \frac{\mu_t}{\pi}}_{\Hr} \\
+      &= -\norm*{S_{\mu_t} \nabla \log \frac{\mu_t}{\pi}}_\Hr^2
     \end{align*}
   \end{proof}
 \end{proposition}
