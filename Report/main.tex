@@ -74,7 +74,7 @@ We fix here $\pi$ an objective distributions from which we want to sample, and a
 \subsection{Notations}
 We will denote as earlier by $\P_2(\X)$ the Wasserstein space of distributions i.e. the set of distributions such that $\int ||x||^2 d\mu(x) < \infty$. We assume the objective distribution $\pi$ lives in $\P_2(\X)$, and define the Kullback-Liebler divergence between $\pi_1$ and $\pi_2$ by
 $$\KL(\pi_1||\pi_2) := \E_{\pi_1} [\log \pi_1(x)] - \E_{\pi_1}[\log \pi_2(x)]$$ \newline
-Let $\A_\pi$ the Stein Operator defined by $\forall \phi \in \H, \forall x \in \X, \A_\pi \phi(x) = \nabla \log \pi(x) \phi(x)^T + \nabla\cdot \phi(x)$, for some $\H$ we will precise later on. \newline
+Let $\A_\pi$ the Stein Operator defined by $\forall \phi \in \H, \forall x \in \X, \A_\pi \phi(x) = \nabla \log \pi(x) \phi(x)^\top + \nabla\cdot \phi(x)$, for some $\H$ we will precise later on. \newline
 We define the Stein class of $\pi$ the subset of functions $\phi$ such that $\lim_{||x||\longrightarrow \infty} \phi(x)\pi(x) = 0$. Note that for every function in the Stein class of $\pi$, we have \begin{equation}
   \E_{x \sim \pi}[\A_\pi \phi (x)] = 0
   \label{eq:stein_id}
@@ -85,7 +85,7 @@ The gradient of $\KL(\cdot||\pi)$ at $\mu$ in $\P_2(\X)$ is given by $\nabla_{W_
 Finally, for $\phi : \R^d \longrightarrow \R^d$, we denote by $||\phi||_{op}$ the operator norm. \newline
 
 \subsection{Context}
-Let $\mu \in \P_2(\X)$. Given a smooth function $\phi = [\phi_1,...,\phi_d]^T$, a small perturbation of $\mu$ in the direction of $\phi$ is given by 
+Let $\mu \in \P_2(\X)$. Given a smooth function $\phi = [\phi_1,...,\phi_d]^\top$, a small perturbation of $\mu$ in the direction of $\phi$ is given by 
 \begin{equation}
     \mu_{[T]} = \mu_\#(I+\gamma \phi)
 \end{equation}
@@ -127,6 +127,7 @@ to an initial density $\mu_0$ following
 the trajectory $\phi^*$ that minimizes the gradient of the Kullback-Leibler divergence:
 \begin{equation}
   \mu_{n+1} = \pare*{ I + \gamma \phi^* }_\# \mu_n
+  \label{eq:mu-n}
 \end{equation}
 
 %%%%%% A continuer : $$ \E_{x\sim \pi} [k(x, ·)\nabla x \log \pi(x) + \nabla xk(x, ·)] $$
@@ -161,6 +162,9 @@ that the authors used throughout their paper.\\
     \W_p(\mu, \nu) = \inf_{\gamma \in \Gamma(\mu, \nu)} \int_\X \int_\X
     \norm*{x-y}^p \gamma(x, y) \d x \d y.
   $$
+  This define a distance on the space of probability measures as it is
+  positive, symmetric, $0$ if and only if $\mu = \nu$ and satisfies
+  the triangle inequality.
 \end{definition}
 
 \begin{definition}[Continuity equation \cite{villani2003}]\label{def:continuity-equation}
@@ -299,6 +303,37 @@ Wasserstein gradient flow: $v_t = -P_{\mu_t} \nabla \log \frac{\mu_t}{\pi}$.
 This lemma also implies the convergence for the average of $\Stein$
 defined in (\ref{eq:convergence-avg-stein}), but for discrete time (replacing the
 integral by a sum).
+
+\subsection{Finite particle setting}
+Finally, the authors proved a convergence bounds between
+$\mu_n$ and its equivalent in the finite particle setting.
+In practice, when implementing SVGD, one starts with $N$ particles
+such that $X_i \sim \mu_0$ for $i \in \{1, \ldots, N\}$.
+Then, at each iteration $n$, SVGD computes the new particles $X_i^{n+1}$
+as follows:
+\begin{equation}
+X_i^{n+1} = X_i^n - \gamma P_{\hat{\mu}_n} \nabla \log \pare*{ \frac{\hat{\mu}_n}{\pi} }(X_i^n)
+\label{eq:hat-mu-n}
+\end{equation}
+where $\hat{\mu}_n = \frac{1}{N} \sum_{i=1}^N \delta_{X_i^n} $ is the empirical distribution
+of the particles. Under some Lipschitz assumptions, the following proposition holds:
+\begin{proposition}
+  Let $n > 0$ and $T > 0$. Let $\mu_n$ and $\hat{\mu}_n$ defined in (\ref{eq:mu-n}) and
+  (\ref{eq:hat-mu-n}) respectively. Then, for any $0 \leq n \leq \frac{T}{\gamma}$:
+  \begin{equation}
+    \E\sq*{ \W_2^2(\mu_n, \hat{\mu}_n) } \leq \frac{1}{2}
+      \pare*{ \frac{1}{\sqrt{N}} \sqrt{var(\mu_0)} e^{LT} } \pare*{e^{2LT} - 1},
+  \end{equation}
+  where $T$ is a constant depending on $\pi$ and $k$.
+\end{proposition}
+This last result connects the usual implementation of SVGD
+that is in the finite particle setting with the infinite setting.
+It allows to ensure that
+the theoretical results showed before asymptotically hold in practice.
+It means that the implementation of the SVGD algorithm minimizes
+the $\KL$ divergence between $\hat{\mu}_n$ and $\pi$,
+with a sufficient amount of time depending on the number of particles.
+
 
 \section{Experiences}
 
