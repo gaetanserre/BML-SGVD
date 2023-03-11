@@ -65,8 +65,8 @@ Master Mathématiques, Vision, Apprentissage\\
 \BackGroundImage{MVA.pdf}
 
 \section{Introduction}
-In this paper we will contextualize and describe the article \cite{main-paper}. The goal is to be able to sample from an unknown distribution $\pi$ thanks to an iterative procedure that is called Stein Variational Gradient Descent (SVGD). It was first introduced by \cite{Original-SVGD}. Starting from an initial distribution $\mu_0$, this algorithm can be seen as a gradient descent in the Wasserstein space of distributions $\P_2(\X)$, with $\X \in \R^d$.
-{\bf TODO METTRE NOS CONTRIBS}
+In this paper we will contextualize and describe the article \cite{main-paper}. The goal is to be able to sample from an unknown distribution $\pi$ thanks to an iterative procedure that is called Stein Variational Gradient Descent (SVGD). It was first introduced by \cite{Original-SVGD}. Starting from an initial distribution $\mu_0$, this algorithm can be seen as a gradient descent in the Wasserstein space of distributions $\P_2(\X)$, with $\X \in \R^d$. On this work, our contributions were multiple: one the one side, we have written in Annex proofs that were not given or very brief in both papers \cite{main-paper} and \cite{Original-SVGD}, and on the other side, we re-implemented the given algorithm itself from scratch (the provided code was not reproducible) to understand better the contribution of the paper. \newline
+We will first present the necessary background to understand \cite{main-paper}, and present the original idea of SVGD from \cite{Original-SVGD}. Then, we will focus on the contributions from \cite{main-paper} before discussing on our experiences, and finishing by a more general discussion about SVGD.
 
 \section{SVGD Context (\cite{Original-SVGD})}
 In all what follows, $\X = \R^d$. \newline
@@ -87,10 +87,11 @@ Finally, for $\phi : \R^d \longrightarrow \R^d$, we denote by $||\phi||_{op}$ th
 \subsection{Context}
 Let $\mu \in \P_2(\X)$. Given a smooth function $\phi = [\phi_1,...,\phi_d]^\top$, a small perturbation of $\mu$ in the direction of $\phi$ is given by 
 \begin{equation}
-    \mu_{[T]} = \mu_\#(I+\gamma \phi)
+    T_\#\mu_{[T]} := \mu_\#(I+\gamma \phi)_\#\mu
 \end{equation}
 for a small $\gamma > 0$. \newline
-Recall that $\E_{x \sim \mu}[\A_\pi \phi (x)] = \int_\X \pare*{ \nabla \log \pi(x)^\top \phi(x) + \nabla \cdot \phi(x) } \mu(x) \d x$. As soon as $\mu$ is not in the Stein class of $\pi$, one can show that $\E_{x \sim \mu}[\A_\pi \phi (x)] > 0$, increasing w.r.t. the difference between $\mu$ and $\pi$ (Proof here: \ref{proof:Esp_distance}).. \newline
+Recall that $\E_{x \sim \mu}[\A_\pi \phi (x)] = \int_\X \pare*{ \nabla \log \pi(x)^\top \phi(x) + \nabla \cdot \phi(x) } \mu(x) \d x$. 
+As soon as $\mu$ is not in the Stein class of $\pi$, one can show that $\E_{x \sim \mu}[\A_\pi \phi (x)] > 0$, increasing w.r.t. the difference between $\mu$ and $\pi$As soon as $\mu$ is not in the Stein class of $\pi$, one can show that $\E_{x \sim \mu}[\A_\pi \phi (x)] > 0$, increasing w.r.t. the difference between $\mu$ and $\pi$ (Proof here: \ref{proof:Esp_distance}).. \newline
 Therefore, the problem we want to solve is to find
 \begin{equation}
   \mu^* = \arg\min_{\mu} \: \S(\mu, \pi) =
@@ -361,13 +362,14 @@ distributions. Both are Gaussian distributions, the first one
 is the same as the one used in the studied paper, and the second one
 is centered on $0$ and with a variance of $5$.
 $\pi$ is a Gaussian mixture model with two modes centered on $-5$ and $5$,
-a variance of $1$, and weights of $2/3$ and $1/3$. The others hyperparameters
+a variance of $1$, and weights of $1/5$ and $4/5$. The others hyperparameters
 are detailed in Table \ref{tab:hyperparameters}.\\
 
 For the first experiment,
 the empirical distribution does not succeed to imitate $\pi$.
 Indeed, the algorithm get stuck in a local minimum, making $\hat{\mu}_t$
-only follow the first modes of $\pi$.
+only follow the first modes of $\pi$, until it becomes a Dirac distribution
+centered on $-5$.
 This behavior is illustrated in Figure~\ref{fig:exp1}, where
 one can see that, at first, the particles are updated in order
 to get closer to $\pi$, as expected. But after a few iterations,
@@ -386,43 +388,35 @@ Figure~\ref{fig:exp2}. The $\KL$ divergence also decreases exponentially,
 as shown in Figure~\ref{fig:KL-exp2}, with $\lambda = 0.01$.
 
 
-\begin{table}[H]
-  \centering
-  \begin{tabular}{c|c}
-    \hline
-    $\pi$ & Mix Gaussian \\
-    N & 100 \\
-    $\gamma$ & 0.1 \\
-    $k$ & RBF kernel using median trick \\
-    \# iter & 500 \\
-    \hline
-  \end{tabular}
-  \caption{Hyperparameters used for the SVGD experiments.}
-  \label{tab:hyperparameters}
-\end{table}
-
 \begin{figure}[H]
   \centering
-  \begin{subfigure}{0.32\textwidth}
+  \begin{subfigure}{0.48\textwidth}
     \centering
     \includegraphics[width=\textwidth]{exp1-0.pdf}
-    \caption{Iteration 1}
+    \caption{Initial distribution}
   \end{subfigure}
-  \begin{subfigure}{0.32\textwidth}
+  \begin{subfigure}{0.48\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{exp1-100.pdf}
-    \caption{Iteration 100}
+    \includegraphics[width=\textwidth]{exp1-50.pdf}
+    \caption{Iteration 50}
   \end{subfigure}
-  \begin{subfigure}{0.32\textwidth}
+  \\
+  \begin{subfigure}{0.48\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{exp1-500.pdf}
-    \caption{Iteration 500}
+    \includegraphics[width=\textwidth]{exp1-530.pdf}
+    \caption{Iteration 530}
+  \end{subfigure}
+  \begin{subfigure}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{exp1-1000.pdf}
+    \caption{Iteration 1000 ($\delta$ distribution not visible)}
   \end{subfigure}
 
-  \caption{Several iterations of the SVGD algorithm
+  \caption{Initial distribution and several iterations of the SVGD algorithm
     of the first experiment. One can see that the
     algorithm get stuck in a local minimum, making $\hat{\mu}_t$
-    only follow the first modes of $\pi$.}
+    only follow the first modes of $\pi$, until it becomes a Dirac distribution
+    centered on $-5$.}
   \label{fig:exp1}
 \end{figure}
 
@@ -430,38 +424,33 @@ as shown in Figure~\ref{fig:KL-exp2}, with $\lambda = 0.01$.
   \centering
   \includegraphics[width=0.6\textwidth]{norm_direction.pdf}
   \caption{2-norm of the update direction of the particles
-    for the first experiment. It corroborates the fact that
+    for the first experiment. It quickly converges to $0$, corroborating the fact that
     the algorithm get stuck in a local minimum.}
   \label{fig:norm-update}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{KL-exp1.pdf}
+  \includegraphics[width=0.6\textwidth]{exp1-KL.pdf}
   \caption{Exponential decrease of the $\KL$ divergence
-    over time for the first experiment. $\lambda=0.01$.}
+    over time for the first experiment. $\lambda=0.0008$.}
   \label{fig:KL-exp1}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \begin{subfigure}{0.32\textwidth}
+  \begin{subfigure}{0.4\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{exp1-0.pdf}
-    \caption{Iteration 1}
+    \includegraphics[width=\textwidth]{exp2-0.pdf}
+    \caption{Initial distribution}
   \end{subfigure}
-  \begin{subfigure}{0.32\textwidth}
+  \begin{subfigure}{0.4\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{exp1-100.pdf}
-    \caption{Iteration 100}
-  \end{subfigure}
-  \begin{subfigure}{0.32\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{exp1-500.pdf}
-    \caption{Iteration 500}
+    \includegraphics[width=\textwidth]{exp2-1000.pdf}
+    \caption{Iteration 1000}
   \end{subfigure}
 
-  \caption{Several iterations of the SVGD algorithm
+  \caption{Initial distribution and last iteration of the SVGD algorithm
     of the second experiment. One can see that the
     algorithm is able to take into account both modes of $\pi$.}
   \label{fig:exp2}
@@ -469,16 +458,37 @@ as shown in Figure~\ref{fig:KL-exp2}, with $\lambda = 0.01$.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{KL-exp1.pdf}
+  \includegraphics[width=0.6\textwidth]{exp2-KL.pdf}
   \caption{Exponential decrease of the $\KL$ divergence
     over time for the second experiment. $\lambda=0.001$.}
   \label{fig:KL-exp2}
 \end{figure}
 
+\begin{table}[H]
+  \centering
+  \begin{tabular}{c|c}
+    \hline
+    $\pi$ & Mix Gaussian \\
+    N & 100 \\
+    $\gamma$ & 0.1 \\
+    $k$ & RBF kernel \\
+    \# iter & 1000 \\
+    \hline
+  \end{tabular}
+  \caption{Hyperparameters used for the SVGD experiments.}
+  \label{tab:hyperparameters}
+\end{table}
+
 \section{Discussions}
-
+We will here discuss more about \cite{main-paper} itself rather than on the SVGD. To us, a few problems appear  which make the paper less understandable for non-expert reseachers on the subject. \newline
+First of all, the necessary background on optimal transport and functional analysis (especially on the notations) can be a barrier to understanding the ideas of the paper. About the notations, there are many differences between \cite{main-paper} and the original paper for SVGD \cite{Original-SVGD}. Also, both papers base their background in optimal transport on the reference \cite{villani2003}, which has even different notations. Thus, the workload to understand which notation correspond to which one is quite high. \newline
+Also, even though the abstract from \cite{main-paper} tries to cover what the paper is about, we found it difficult to really understand where the authors want to bring us reading the paper, as the preliminaries and the necessary background on SVGD take in fact more than half of the paper. \newline
+Some typos also are present (we understand that it is often hard to submit a full paper without any error, but that sometimes took a lot of time for us to convince ourselves this or this equality is false or exact, as we are not experts of the subject). \newline
+Finally, even though the experiences are given in annex, they link their experiences with a GitHub repository which is not easy to understand at all, and therefore is not reproducible. Also, it bases itself on the code from \cite{Original-SVGD}, which does not describe properly the steps in the code. \newline
+Overall, this paper is a nice theoritical paper giving useful insights of SVGD for the future. On the other hand, it is hard to understand for people with lighter background in state-of-the-art bayesian inference.
+ 
 \section{Conclusion}
-
+Overall, SVGD appears to be a competitive method for bayesian inference. \cite{main-paper} allows us to understand better the theory behind SVGD, which is widely used by machine learning practitioners. However, its properties are not as well known as Langevin Monte Carlo dynamics yet, which is its principal competitor. In the next few years, we can arguably suppose that SVGD dynamics will be understood even better, and replacing Langevin-type algorithms in some research problems, such as black-box variational inference and GANs for instance (see \cite{ccl}). 
 
 \bibliographystyle{plainnat}
 \bibliography{biblio}
