@@ -48,8 +48,9 @@
 \begin{document} 
 
 \mainmatter
-\titlerunning{Stein Variational Gradient Descent: Main ideas}
-\title{Stein Variational Gradient Descent: Main ideas}
+\titlerunning{Non-asymptotic Stein Variational Gradient Descent}
+\title{Non-asymptotic Stein Variational Gradient Descent\\
+{\it Project report}}
 
 \author{Gaëtan Serré and Perceval Beja-Battais}
 \authorrunning{Serré and Beja-Battais}
@@ -58,21 +59,21 @@
 Master Mathématiques, Vision, Apprentissage\\
 \{gaetan.serre, perceval.beja-battais\}@ens-paris-saclay.fr}
 
-\toctitle{Stein Variational Gradient Descent: Main ideas}
+\toctitle{Non-asymptotic Stein Variational Gradient Descent}
 \tocauthor{Gaëtan Serré and Perceval Beja-Battais}
 \maketitle
 
 \BackGroundImage{MVA.pdf}
 
 \section{Introduction}
-In this paper we will contextualize and describe the article \cite{main-paper}. The goal is to be able to sample from an unknown distribution $\pi$ thanks to an iterative procedure that is called Stein Variational Gradient Descent (SVGD). It was first introduced by \cite{Original-SVGD}. Starting from an initial distribution $\mu_0$, this algorithm can be seen as a gradient descent in the Wasserstein space of distributions $\P_2(\X)$, with $\X \in \R^d$. On this work, our contributions were multiple: one the one side, we have written in Annex proofs that were not given or very brief in both papers \cite{main-paper} and \cite{Original-SVGD}, and on the other side, we re-implemented the given algorithm itself from scratch (the provided code was not reproducible) to understand better the contribution of the paper. \newline
+In this paper we will contextualize and describe the article \cite{main-paper}. This paper brings theoretical results on the SVGD algorithm, where the goal is to approach an unknown probability density $\pi$ by iteratively transforming a arbitrary known density $\mu$. It was first introduced by \cite{Original-SVGD}. Starting from an initial distribution $\mu_0$, this algorithm can be seen as a gradient descent in the Wasserstein space of distributions. On this work, our contributions were multiple: on one side, we provide proofs (see Annex) that were not given or very briefly in main papers (\cite{main-paper}, \cite{Original-SVGD}, and \cite{SVGD-flow}), and on the other side, we re-implemented the given algorithm itself from scratch (the provided code was not reproducible) to understand better the contribution of the paper. \newline
 We will first present the necessary background to understand \cite{main-paper}, and present the original idea of SVGD from \cite{Original-SVGD}. Then, we will focus on the contributions from \cite{main-paper} before discussing on our experiences, and finishing by a more general discussion about SVGD.
 
 \section{SVGD Context (\cite{Original-SVGD})}
 In all what follows, $\X = \R^d$. \newline
-We fix here $\pi$ an objective distributions from which we want to sample, and an initial distribution from which we know how to sample $\mu_0$. 
+We fix here $\pi$ an objective probability density, and an initial probability density $\mu_0$. 
 \subsection{Notations}
-We will denote as earlier by $\P_2(\X)$ the Wasserstein space of distributions i.e. the set of distributions such that $\int ||x||^2 d\mu(x) < \infty$. We assume the objective distribution $\pi$ lives in $\P_2(\X)$, and define the Kullback-Liebler divergence between $\pi_1$ and $\pi_2$ by
+We will denote by $\P_2(\X)$ the set of probability density on $\X$ with finite second order moment i.e. the set of distributions such that $\int ||x||^2 d\mu(x) < \infty$. We assume the objective distribution $\pi$ lives in $\P_2(\X)$, and define the Kullback-Liebler divergence between $\pi_1$ and $\pi_2$ by
 $$\KL(\pi_1||\pi_2) := \E_{\pi_1} [\log \pi_1(x)] - \E_{\pi_1}[\log \pi_2(x)]$$ \newline
 Let $\A_\pi$ the Stein Operator defined by $\forall \phi \in \H, \forall x \in \X, \A_\pi \phi(x) = \nabla \log \pi(x) \phi(x)^\top + \nabla\cdot \phi(x)$, for some $\H$ we will precise later on. \newline
 We define the Stein class of $\pi$ the subset of functions $\phi$ such that $\lim_{||x||\longrightarrow \infty} \phi(x)\pi(x) = 0$. Note that for every function in the Stein class of $\pi$, we have \begin{equation}
@@ -81,7 +82,6 @@ We define the Stein class of $\pi$ the subset of functions $\phi$ such that $\li
 \end{equation}
 (See \ref{proof:stein_id} for the proof)\newline
 Also, we define the pushforward measure of $\mu$ by $T:\R^d \longrightarrow \R^d$ by $\int \phi(T(x)) d\mu(x) = \int \phi(x) dT_\#\mu(x)$ for any bounded and measurable function $\phi$. \newline
-The gradient of $\KL(\cdot||\pi)$ at $\mu$ in $\P_2(\X)$ is given by $\nabla_{W_2}\KL(\mu||\pi) = \nabla \log(\frac{\mu}{\pi})$. The idea behind SVGD is to iteratively follow the descent direction given by $\nabla_{W_2} \KL (\cdot||\pi)$. \newline
 Finally, for $\phi : \R^d \longrightarrow \R^d$, we denote by $||\phi||_{op}$ the operator norm. \newline
 
 \subsection{Context}
@@ -91,18 +91,22 @@ Let $\mu \in \P_2(\X)$. Given a smooth function $\phi = [\phi_1,...,\phi_d]^\top
 \end{equation}
 for a small $\gamma > 0$. \newline
 Recall that $\E_{x \sim \mu}[\A_\pi \phi (x)] = \int_\X \pare*{ \nabla \log \pi(x)^\top \phi(x) + \nabla \cdot \phi(x) } \mu(x) \d x$. 
-As soon as $\mu$ is not in the Stein class of $\pi$, one can show that $\E_{x \sim \mu}[\A_\pi \phi (x)] > 0$, increasing w.r.t. the difference between $\mu$ and $\pi$As soon as $\mu$ is not in the Stein class of $\pi$, one can show that $\E_{x \sim \mu}[\A_\pi \phi (x)] > 0$, increasing w.r.t. the difference between $\mu$ and $\pi$ (Proof here: \ref{proof:Esp_distance}).. \newline
+As soon as $\mu$ is not in the Stein class of $\pi$, one can show that $\left | \E_{x \sim \mu}[\A_\pi \phi (x)] > 0 \right |$, increasing w.r.t. the difference between $\mu$ and $\pi$. (proof in \ref{proof:Esp_distance}). \newline
 Therefore, the problem we want to solve is to find
 \begin{equation}
   \mu^* = \arg\min_{\mu} \: \S(\mu, \pi) =
     \arg\min_{\mu} \: \max_{\phi \in \H} \bra*{ \E_{x \sim \mu}[\A_\pi \phi (x)] },
   \label{eq:stein_obj}
 \end{equation}
-for a certain class $\H$ of functionals. A question now raises: how to choose $\H$?
+for a certain class $\H$ of functionals.
+Indeed, the above objective is equal to $0$ if and only if $\mu = \pi$ and greater than $0$ otherwise,
+with $\H$ sufficiently large. A question now raises: how to choose $\H$ to be rich enough and
+still tractable? \newline
 \subsubsection{Choice of $\H$}\label{sec:RKHS}
-In all papers, $\H$ is chosen as the product RKHS of $\X$. We will quickly explain here why so. \newline
+The idea of the original paper of SVGD (\cite{Original-SVGD}) is too choose $\H$ a RKHS and
+to maximize $\S(\mu, \pi)$ in the unit ball of $\H$. This is called the Kernel Stein Discrepancy (KSD). \newline
 Let $\H_0$ be a RKHS with a kernel $k(x, x')$ in the Stein class of $\pi$.
-Let $\H = (\H^{(1)}_0, \dots, \H^{(d)}_0)$. The KSD maximizes $\phi$ in the unit ball of $\H$.
+Let $\H = (\H^{(1)}_0, \dots, \H^{(d)}_0)$.
 The objective in (\ref{eq:stein_obj}) is then:
 \begin{equation}
   \S(\mu, \pi) =
@@ -118,7 +122,8 @@ is given by:
   \label{eq:stein_ksd_sol}        
 \end{equation}
 where $\A_\pi \otimes f(x) =  f(x) \nabla \log \pi(x) + \nabla f(x)$, is a variant of Stein operator. We also know that $\phi^*$ is in the Stein class of $\pi$ as $k$ is.
-Moreover, $\S(\mu, \pi) = \|\phi^*\|_\H$. (Complete proof in \ref{proof:KSD})
+Moreover, $\S(\mu, \pi) = \|\phi^*\|_\H$ (complete proof in \ref{proof:KSD}).
+If we know how to sample from $\mu$, we can then approximate $\phi^*$ easily.
 \subsubsection{Return to the problem}
 For $\gamma < \frac{1}{||\phi||_{op}}$, $(I+\gamma \phi)$ is locally one-to-one. We then have that $$\nabla_\gamma \KL(T_\#\mu||\pi)|_{\gamma = 0} = - \E_{x\sim \pi}[\A_\pi \phi(x)]$$ 
 Considering all descent directions on the ball $\{\phi\in \H, ||\phi||^2_{op} \leq \S(\mu,\pi)\}$, the one we will keep for our gradient descent is the one minimizing the gradient of $\KL$, which writes $\phi^*$ as showed just earlier. \newline
@@ -130,11 +135,16 @@ the trajectory $\phi^*$ that minimizes the gradient of the Kullback-Leibler dive
   \mu_{n+1} = \pare*{ I + \gamma \phi^* }_\# \mu_n
   \label{eq:mu-n}
 \end{equation}
+To be able to perform a SVGD iteration, the unknown density $\pi$ only appears
+in $\nabla \log \pi(x)$. This is very convenient as, in a Bayesian framework,
+$\pi$ could be a posterior distribution where the normalization constant is not known.
+However, $\nabla \log \pi(x) = \nabla \log \frac{\pi'}{Z} = \nabla \log \pi'$,
+where $\pi'$ is the unnormalized posterior and $Z$ is the normalization constant.
 
 %%%%%% A continuer : $$ \E_{x\sim \pi} [k(x, ·)\nabla x \log \pi(x) + \nabla xk(x, ·)] $$
 
 \section{Non-asymptotic analysis of SVGD}
-In their paper (\cite{main-paper}), under assumptions, the authors provide
+In their paper (\cite{main-paper}), under assumptions, the authors provided
 an exponential convergence rate for continuous time SVGD, and
 a convergence result between SVGD in the infinite particle setting
 and in the finite particle setting.
@@ -170,7 +180,7 @@ that the authors used throughout their paper.\\
 
 \begin{definition}[Continuity equation \cite{villani2003}]\label{def:continuity-equation}
   Let $\X$ be $\R^d$ and $(T_t)_{0 \leq t}$ a measurable map from $\X$ to $\X$
-  such that $T_t = I + \phi(t)$.
+  such that $T_t(\cdot) = (I + \phi_t)(\cdot)$.
   Let $v_t$ be the velocity field associated 
   with the trajectories $T_t$. Let $\mu_0 \in \P_2(\X)$
   and $\mu_{t+1} = T_t \# \mu_t$. Then, $\mu_t$ is the unique solution
@@ -190,7 +200,7 @@ the RKHS $\H$ and $\H_0$ on real-valued function of $\X$ the same way as in
 Section~\ref{sec:RKHS}
 
 \noindent
-They start by defining operators on the RKHS.
+They start by defining operators on $\H$.
 \begin{definition}
   Let $S_\mu : L_2(\mu) \to \H$ be the operator defined by:
   $$
@@ -218,6 +228,9 @@ of $\mu$ (see \ref{pro:phi-Smu}):
 
 
 \subsection{Convergence of rates for continuous time SVGD}
+In this setting, we consider the SVGD as a gradient flow, where $\mu_t$ is a function
+of time i.e. when $\gamma \to 0$ in the SVGD iteration (\ref{eq:mu-n}).
+
 \begin{definition}[Stein Fisher information]
   Let $\mu \in \P_2(\X)$. The Stein Fisher information of $\mu$ relative to
   $\pi$ is defined as follows:
@@ -231,9 +244,10 @@ of $\mu$ (see \ref{pro:phi-Smu}):
 The authors proved the following proposition:
 \begin{proposition}\label{prop:KL-Stein}
   The time-derivative (or dissipation) of the $\KL$ divergence between $\mu_t$ and $\pi$ is
-  $$
-  \diff{\KL(\mu_t || \pi)}{t} = - I_{Stein}(\mu_t | \pi).
-  $$
+  \begin{equation}
+    \diff{\KL(\mu_t || \pi)}{t} = - I_{Stein}(\mu_t | \pi).
+    \label{eq:KL-time-diff}
+  \end{equation}
 \end{proposition}
 \noindent
 We provide a more complete proof in \ref{pro:KL-Stein}.\\
@@ -247,7 +261,7 @@ for the average of $\Stein$ over time:
   \label{eq:convergence-avg-stein}
 \end{equation}
 
-(It can be easily shown by integrating \ref{pro:KL-Stein}).
+(It can be easily shown by integrating \ref{eq:KL-time-diff}).
 However, for the convergence of $I_{Stein}(\mu_t | \pi)$ to be fast,
 $\pi$ must satisfy the Stein log-Sobolev inequality:
 
@@ -276,6 +290,8 @@ of SVGD minimizes the $\KL$ divergence between $\mu_t$ and $\pi$ exponentially f
 assuming $\pi$ satisfies the Stein log-Sobolev inequality.
 
 \subsection{SVGD in discrete time}
+We go back to the original setting of SVGD, where $\mu_n$ is a discrete
+time function, as defined in (\ref{eq:mu-n}).\\
 
 The authors defined the following mild assumptions:
 \begin{itemize}
@@ -287,7 +303,7 @@ The authors defined the following mild assumptions:
     $\exists M > 0$ such that $\norm*{H_V}_{op} \leq M$:
   \item {\bf (A3)}: $\exists C > 0$ such that $I_{Stein}(\mu_n || \pi) < C$ for all $n$.
 \end{itemize}
-With these condition satisfied, the authors were able to show the following descent
+With these conditions satisfied, the authors were able to show the following descent
 lemma:
 \begin{lemma}[Descent lemma  for SVGD in discrete time]
   Let $\alpha > 1$ and $\gamma \leq \frac{\alpha-1}{\alpha B C^{\frac{1}{2}}}$.
@@ -300,7 +316,7 @@ lemma:
 A descent lemma has already been proved before (\cite{SVGD-flow}),
 but the authors proved it using differential calculus in the Wasserstein space,
 showing a more direct link between the descent lemma and the 
-Wasserstein gradient flow: $v_t = -P_{\mu_t} \nabla \log \frac{\mu_t}{\pi}$.
+Wasserstein gradient flow: $v_t \triangleq -P_{\mu_t} \nabla \log \frac{\mu_t}{\pi}$.
 This lemma also implies the convergence for the average of $\Stein$
 defined in (\ref{eq:convergence-avg-stein}), but for discrete time (replacing the
 integral by a sum).
@@ -324,16 +340,17 @@ of the particles. Under some Lipschitz assumptions, the following proposition ho
   \begin{equation}
     \E\sq*{ \W_2^2(\mu_n, \hat{\mu}_n) } \leq \frac{1}{2}
       \pare*{ \frac{1}{\sqrt{N}} \sqrt{var(\mu_0)} e^{LT} } \pare*{e^{2LT} - 1},
+    \label{eq:W2-bounds}
   \end{equation}
-  where $T$ is a constant depending on $\pi$ and $k$.
+  where $L$ is a constant depending on $\pi$ and $k$.
 \end{proposition}
 This last result connects the usual implementation of SVGD
 that is in the finite particle setting with the infinite setting.
 It allows to ensure that
-the theoretical results showed before asymptotically hold in practice.
-It means that the implementation of the SVGD algorithm minimizes
-the $\KL$ divergence between $\hat{\mu}_n$ and $\pi$,
-with a sufficient amount of time depending on the number of particles.
+the theoretical results showed above asymptotically hold in practice,
+w.r.t. the number of particles $N$.\\
+It is a first indication that, with enough particles, the implementation the SVGD algorithm
+should be able to minimize the $\KL$ divergence between $\mu_n$ and $\pi$.
 
 
 \section{Experiences}
@@ -360,10 +377,10 @@ decreases, as shows (\ref{eq:exp-KL}).
 To do so, we made two experiments with different particles
 distributions. Both are Gaussian distributions, the first one
 is the same as the one used in the studied paper, and the second one
-is centered on $0$ and with a variance of $5$.
+is centered on $0$ and with a variance of $0.3$.
 $\pi$ is a Gaussian mixture model with two modes centered on $-5$ and $5$,
-a variance of $1$, and weights of $1/5$ and $4/5$. The others hyperparameters
-are detailed in Table \ref{tab:hyperparameters}.\\
+with weights respectively $1/5$ and $4/5$, and with a variance of $1$.
+The others hyperparameters are detailed in Table \ref{tab:hyperparameters}.\\
 
 For the first experiment,
 the empirical distribution does not succeed to imitate $\pi$.
@@ -378,14 +395,17 @@ the algorithm does not foresee the second mode and get stuck in a local minimum
 (as one can see with Figure~\ref{fig:norm-update}).
 However, the $\KL$ divergence decreases exponentially, until it reaches
 the local minimum. This is illustrated in Figure~\ref{fig:KL-exp1},
-where we empirically set $\lambda = 0.01$.\\
+where we empirically set $\lambda = 0.0008$.
+As (\ref{eq:W2-bounds}) suggests, use more particles
+should solve the issue, but it would require too much particles to be
+computationally feasible in practice.\\
 
 On the other hand, the second experiment is more successful.
 Indeed, the particules are distributed following a Gaussian distribution
-with a large variance around $0$, which allows the algorithm
+with a small variance around $0$, which allows the algorithm
 to take into account both mode of $\pi$. This is illustrated in
 Figure~\ref{fig:exp2}. The $\KL$ divergence also decreases exponentially,
-as shown in Figure~\ref{fig:KL-exp2}, with $\lambda = 0.01$.
+as shown in Figure~\ref{fig:KL-exp2}, with $\lambda = 0.001$.
 
 
 \begin{figure}[H]
@@ -425,13 +445,13 @@ as shown in Figure~\ref{fig:KL-exp2}, with $\lambda = 0.01$.
   \includegraphics[width=0.6\textwidth]{norm_direction.pdf}
   \caption{2-norm of the update direction of the particles
     for the first experiment. It quickly converges to $0$, corroborating the fact that
-    the algorithm get stuck in a local minimum.}
+    the algorithm get stuck in a local minimum. Spikes happen when particles "fall" in a mode.}
   \label{fig:norm-update}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{exp1-KL.pdf}
+  \includegraphics[width=0.5\textwidth]{exp1-KL.pdf}
   \caption{Exponential decrease of the $\KL$ divergence
     over time for the first experiment. $\lambda=0.0008$.}
   \label{fig:KL-exp1}
@@ -439,12 +459,12 @@ as shown in Figure~\ref{fig:KL-exp2}, with $\lambda = 0.01$.
 
 \begin{figure}[H]
   \centering
-  \begin{subfigure}{0.4\textwidth}
+  \begin{subfigure}{0.48\textwidth}
     \centering
     \includegraphics[width=\textwidth]{exp2-0.pdf}
     \caption{Initial distribution}
   \end{subfigure}
-  \begin{subfigure}{0.4\textwidth}
+  \begin{subfigure}{0.48\textwidth}
     \centering
     \includegraphics[width=\textwidth]{exp2-1000.pdf}
     \caption{Iteration 1000}
@@ -458,7 +478,7 @@ as shown in Figure~\ref{fig:KL-exp2}, with $\lambda = 0.01$.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{exp2-KL.pdf}
+  \includegraphics[width=0.5\textwidth]{exp2-KL.pdf}
   \caption{Exponential decrease of the $\KL$ divergence
     over time for the second experiment. $\lambda=0.001$.}
   \label{fig:KL-exp2}
@@ -481,19 +501,26 @@ as shown in Figure~\ref{fig:KL-exp2}, with $\lambda = 0.01$.
 
 \section{Discussions}
 We will here discuss more about \cite{main-paper} itself rather than on the SVGD. To us, a few problems appear  which make the paper less understandable for non-expert reseachers on the subject. \newline
-First of all, the necessary background on optimal transport and functional analysis (especially on the notations) can be a barrier to understanding the ideas of the paper. About the notations, there are many differences between \cite{main-paper} and the original paper for SVGD \cite{Original-SVGD}. Also, both papers base their background in optimal transport on the reference \cite{villani2003}, which has even different notations. Thus, the workload to understand which notation correspond to which one is quite high. \newline
-Also, even though the abstract from \cite{main-paper} tries to cover what the paper is about, we found it difficult to really understand where the authors want to bring us reading the paper, as the preliminaries and the necessary background on SVGD take in fact more than half of the paper. \newline
-Some typos also are present (we understand that it is often hard to submit a full paper without any error, but that sometimes took a lot of time for us to convince ourselves this or this equality is false or exact, as we are not experts of the subject). \newline
-Finally, even though the experiences are given in annex, they link their experiences with a GitHub repository which is not easy to understand at all, and therefore is not reproducible. Also, it bases itself on the code from \cite{Original-SVGD}, which does not describe properly the steps in the code. \newline
-Overall, this paper is a nice theoritical paper giving useful insights of SVGD for the future. On the other hand, it is hard to understand for people with lighter background in state-of-the-art bayesian inference.
+First of all, the necessary background on optimal transport and functional analysis (especially on the notations) can be a barrier to understanding the ideas of the paper. About the notations, there are many differences between \cite{main-paper} and the original paper for SVGD \cite{Original-SVGD}. Also, both papers base their background in optimal transport on books (\cite{villani2003} \& \cite{villani2008}), which has even different notations. Thus, the workload to understand which notation correspond to which one is quite high. \newline
+Also, even though the abstract from \cite{main-paper} tries to cover what the paper is about, we found it difficult to really understand where the authors want to bring us reading the paper, as the preliminaries and the necessary background on SVGD take in fact more than half of the paper.
+Yet, one absolutely needs to read \cite{Original-SVGD} and \cite{SVGD-flow} to fully understand the paper's contributions. \newline
+Some misleading typos took us a while to convince ourselves that they are actual errors and not
+just a misunderstanding of the paper, as we are not experts in the field. For example,
+in Equation (8), the authors wrote $\lim_{\norm{x} \to \infty} k(x, x)\pi(x) = 0$ instead of $\lim_{\norm{x} \to \infty} k(x, x)\mu(x) = 0$. \newline
+Finally, even though the experiences are given in annex, they link their experiences with a GitHub repository which is not easy to understand at all, and therefore is not reproducible. Also, it is based on the code from \cite{Original-SVGD}, which does not describe properly the steps in the code. \newline
+Overall, this paper is a nice theoretical paper giving useful insights of SVGD for the future. On the other hand, it is hard to understand for people with lighter background in state-of-the-art bayesian inference.
  
 \section{Conclusion}
-Overall, SVGD appears to be a competitive method for bayesian inference. \cite{main-paper} allows us to understand better the theory behind SVGD, which is widely used by machine learning practitioners. However, its properties are not as well known as Langevin Monte Carlo dynamics yet, which is its principal competitor. In the next few years, we can arguably suppose that SVGD dynamics will be understood even better, and replacing Langevin-type algorithms in some research problems, such as black-box variational inference and GANs for instance (see \cite{ccl}). 
+Overall, SVGD appears to be a competitive method for bayesian inference. \cite{main-paper} allows us to understand better the theory behind SVGD,
+providing new convergence rates and a first intuition on the convergence of the implementation of the SVGD. However, its properties are not as well known as Langevin Monte Carlo dynamics yet, which is its principal competitor. In the next few years, we can arguably suppose that SVGD dynamics will be understood even better, and replacing Langevin-type algorithms in some research problems, such as black-box variational inference and GANs for instance (see \cite{ccl}). 
 
 \bibliographystyle{plainnat}
 \bibliography{biblio}
 
 \appendix
+\section{Experiments figures}
+
+
 \section{Proofs}
 \subsection{Proof of \ref{eq:stein_id}}
 \begin{proof}\label{proof:stein_id}
