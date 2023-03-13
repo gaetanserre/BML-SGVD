@@ -1,9 +1,8 @@
 import torch
-from tqdm.auto import tqdm
 import sys
 
 from kernel import rbf
-from exp import experiment
+from run_exp import experiment
 
 if __name__ == "__main__":
 
@@ -19,11 +18,11 @@ if __name__ == "__main__":
   kernel = rbf
 
   ### Experiment 1
-  """ x = torch.distributions.Normal(-10, 1).sample((n_particles,)).to(device)
+  x = torch.distributions.Normal(-10, 1).sample((n_particles,)).to(device)
   lamb = 0.0008
-  experiment(x, mix.log_prob, int(sys.argv[1]), eta, kernel, lamb) """
+  experiment(x, mix.log_prob, int(sys.argv[1]), eta, kernel, lamb, "exp1/")
 
   ### Experiment 2
   x = torch.distributions.Normal(0, 0.3).sample((n_particles,)).to(device)
   lamb = 0.001
-  experiment(x, mix.log_prob, int(sys.argv[1]), eta, kernel, lamb)
+  experiment(x, mix.log_prob, int(sys.argv[1]), eta, kernel, lamb, "exp2/")
