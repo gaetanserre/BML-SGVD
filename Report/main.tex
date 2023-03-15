@@ -1,6 +1,28 @@
-\documentclass[runningheads,a4paper]{llncs}
+\documentclass{article}
 
-\setcounter{tocdepth}{3}
+
+% if you need to pass options to natbib, use, e.g.:
+%     \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2022
+
+
+% ready for submission
+\usepackage[final]{neurips_2022}
+
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+%     \usepackage[preprint]{neurips_2022}
+
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+%     \usepackage[final]{neurips_2022}
+
+
+% to avoid loading the natbib package, add option nonatbib:
+%    \usepackage[nonatbib]{neurips_2022}
+
+
 \usepackage{natbib}
 \usepackage[english]{babel}
 \usepackage{graphicx}
@@ -10,20 +32,7 @@
 \usepackage{amsmath, amssymb, mathtools, amsthm}
 \usepackage{hyperref}
 \usepackage{url}
-\usepackage[pages=some]{background}
-\usepackage[margin=2.8cm]{geometry}
-\usepackage{lipsum}
 \graphicspath{{figures/}}
-\definecolor{MVA}{HTML}{652475}
-
-\newcommand\BackGroundImage[1]{%
-\BgThispage
-\backgroundsetup{
-    scale=1,angle=0,position={current page.north}, hshift=-7.5cm, 
-    vshift=-1.5cm, opacity=1,
-    contents={%
-    \includegraphics[width=5cm]{#1}
-}}}
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\E}{\mathbb{E}}
@@ -45,25 +54,63 @@
 \DeclarePairedDelimiter{\sca}{\langle}{\rangle}
 \renewcommand\qedsymbol{$\blacksquare$}
 
-\begin{document} 
 
-\mainmatter
-\titlerunning{Non-asymptotic Stein Variational Gradient Descent}
+\newtheorem{definition}{Definition}
+
+\newtheorem{proposition}{Proposition}
+
+\newtheorem{lemma}{Lemma}
+
+
 \title{Non-asymptotic Stein Variational Gradient Descent\\
 {\it Project report}}
 
-\author{Gaëtan Serré and Perceval Beja-Battais}
-\authorrunning{Serré and Beja-Battais}
 
-\institute{École Normale Supérieure Paris-Saclay\\
-Master Mathématiques, Vision, Apprentissage\\
-\{gaetan.serre, perceval.beja-battais\}@ens-paris-saclay.fr}
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
 
-\toctitle{Non-asymptotic Stein Variational Gradient Descent}
-\tocauthor{Gaëtan Serré and Perceval Beja-Battais}
+
+\author{%
+  Gaëtan Serré\\
+  École Normale Supérieure Paris-Saclay\\
+  \texttt{gaetan.serre@ens-paris-saclay.fr}\\
+  \And Perceval Beja-Battais\\
+  École Normale Supérieure Paris-Saclay\\
+  \texttt{perceval.beja-battais@ens-paris-saclay.fr}\\
+  % examples of more authors
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \AND
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+}
+
+
+\begin{document}
+
+
 \maketitle
 
-\BackGroundImage{MVA.pdf}
 
 \section{Introduction}
 In this paper we will contextualize and describe the article \cite{main-paper}. This paper brings theoretical results on the SVGD algorithm, where the goal is to approach an unknown probability density $\pi$ by iteratively transforming a arbitrary known density $\mu$. It was first introduced by \cite{Original-SVGD}. Starting from an initial distribution $\mu_0$, this algorithm can be seen as a gradient descent in the Wasserstein space of distributions. On this work, our contributions were multiple: on one side, we provide proofs (see Annex) that were not given or very briefly in main papers (\cite{main-paper}, \cite{Original-SVGD}, and \cite{SVGD-flow}), and on the other side, we re-implemented the given algorithm itself from scratch (the provided code was not reproducible) to understand better the contribution of the paper. \newline
@@ -80,14 +127,15 @@ We define the Stein class of $\pi$ the subset of functions $\phi$ such that $\li
   \E_{x \sim \pi}[\A_\pi \phi (x)] = 0
   \label{eq:stein_id}
 \end{equation}
-(See \ref{proof:stein_id} for the proof)\newline
+(see \ref{proof:stein_id} for the proof).\newline
+
 Also, we define the pushforward measure of $\mu$ by $T:\R^d \longrightarrow \R^d$ by $\int \phi(T(x)) d\mu(x) = \int \phi(x) dT_\#\mu(x)$ for any bounded and measurable function $\phi$. \newline
 Finally, for $\phi : \R^d \longrightarrow \R^d$, we denote by $||\phi||_{op}$ the operator norm. \newline
 
 \subsection{Context}
 Let $\mu \in \P_2(\X)$. Given a smooth function $\phi = [\phi_1,...,\phi_d]^\top$, a small perturbation of $\mu$ in the direction of $\phi$ is given by 
 \begin{equation}
-    T_\#\mu_{[T]} := \mu_\#(I+\gamma \phi)_\#\mu
+    T_\#\mu_{[T]} := \mu_\#(I+\gamma \phi)_\#\mu,
 \end{equation}
 for a small $\gamma > 0$. \newline
 Recall that $\E_{x \sim \mu}[\A_\pi \phi (x)] = \int_\X \pare*{ \nabla \log \pi(x)^\top \phi(x) + \nabla \cdot \phi(x) } \mu(x) \d x$. 
@@ -132,7 +180,7 @@ in an iterative procedure where one apply successive transformations
 to an initial density $\mu_0$ following
 the trajectory $\phi^*$ that minimizes the gradient of the Kullback-Leibler divergence:
 \begin{equation}
-  \mu_{n+1} = \pare*{ I + \gamma \phi^* }_\# \mu_n
+  \mu_{n+1} = \pare*{ I + \gamma \phi^* }_\# \mu_n.
   \label{eq:mu-n}
 \end{equation}
 To be able to perform a SVGD iteration, the unknown density $\pi$ only appears
@@ -518,8 +566,6 @@ providing new convergence rates and a first intuition on the convergence of the 
 \bibliography{biblio}
 
 \appendix
-\section{Experiments figures}
-
 
 \section{Proofs}
 \subsection{Proof of \ref{eq:stein_id}}
@@ -536,7 +582,7 @@ providing new convergence rates and a first intuition on the convergence of the 
       \int_\X \sum_{k=1}^d \diff{\mu(x)}{x_k} \phi_k(x) \d x \\
     &= \int_\X  \mu(x) \sum_{k=1}^d \diff{\log \mu(x)}{x_k}\phi_k(x) -
     \mu(x) \sum_{k=1}^d \diff{\log \mu(x)}{x_k} \phi_k(x) \d x \;\; \text{(log trick)} \\
-    &= 0
+    &= 0.
   \end{align*}
 \end{proof}
 \subsection{Proof of \ref{eq:stein_ksd_sol}}
@@ -586,7 +632,7 @@ providing new convergence rates and a first intuition on the convergence of the 
     &= \sum_{k=1}^d \mathcal{R}_k +
       \sum_{k=1}^d \sq*{\mu(x) \phi_k(x)}_\X + \int_\X  \mu(x) \sq*{ \sum_{k=1}^d \phi_k(x) \pare*{ \diff{\log \pi(x)}{x_k} - \diff{\log \mu(x)}{x_k}}} \d x \\
     &= \sum_{k=1}^d \mathcal{R}_k +
-      \sum_{k=1}^d \sq*{\mu(x) \phi_k(x)}_\X + \int_\X  \mu(x) \sq*{ \sum_{k=1}^d \phi_k(x) \pare*{ \diff{\log \frac{\pi(x)}{\mu(x)}}{x_k}}} \d x,
+      \sum_{k=1}^d \sq*{\mu(x) \phi_k(x)}_\X + \int_\X  \mu(x) \sq*{ \sum_{k=1}^d \phi_k(x) \pare*{ \diff{\log \frac{\pi(x)}{\mu(x)}}{x_k}}} \d x.
   \end{split}
 \end{equation*}
 \end{proof}
@@ -636,7 +682,7 @@ providing new convergence rates and a first intuition on the convergence of the 
     &= \int_\X \diff{\mu_t(x)}{t} \log \frac{\mu_t(x)}{\pi(x)} \d x
       + \int_\X \diff{\mu_t(x)}{t} \d x \\
     &= \int_\X \diff{\mu_t(x)}{t} \log \frac{\mu_t(x)}{\pi(x)} \d x
-   , \pare*{\text{ $\mu_t$ is a probability measure, so } \forall t, \int_\X \d \mu_t(x) = 1}
+   , \pare*{\text{ $\mu_t$ is a probability measure, so } \forall t, \int_\X \d \mu_t(x) = 1}.
   \end{align*}
   Furthermore, as $\mu_t$ satisfies the continuity equation~(\eqref{def:continuity-equation})
   where $v_t = -P_{\mu_t} \nabla \log \frac{\mu}{\pi}$, we have:
@@ -650,7 +696,7 @@ providing new convergence rates and a first intuition on the convergence of the 
     &= \sca*{v_t, \nabla \log \frac{\mu_t}{\pi}}_{L^2(\mu_t)} \\
     &= \sca*{\iota^* v_t, \iota^* \nabla \log \frac{\mu_t}{\pi}}_{\H} \\
     &= \sca*{-\iota^* \iota S_{\mu_t} \nabla \log \frac{\mu_t}{\pi}, S_{\mu_t} \nabla \log \frac{\mu_t}{\pi}}_{\H} \\
-    &= -\norm*{S_{\mu_t} \nabla \log \frac{\mu_t}{\pi}}_\H^2
+    &= -\norm*{S_{\mu_t} \nabla \log \frac{\mu_t}{\pi}}_\H^2.
   \end{align*}
 \end{proof}
 
@@ -667,9 +713,10 @@ providing new convergence rates and a first intuition on the convergence of the 
     \diff{\KL(\mu_t || \pi)}{t} &\leq -2\lambda \KL(\mu_t || \pi) \\
     \KL(\mu_t || \pi) &\leq \KL(\mu_0 || \pi) \exp \pare*{ \int_0^t -2 \lambda \d s }
     \text{ (Gronwall's lemma) } \\
-    \KL(\mu_t || \pi) &\leq e^{-2\lambda t} \KL(\mu_0 || \pi)
+    \KL(\mu_t || \pi) &\leq e^{-2\lambda t} \KL(\mu_0 || \pi).
   \end{align*}
     
 \end{proof}
 
-\end{document} 
+
+\end{document}
