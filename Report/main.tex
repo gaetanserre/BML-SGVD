@@ -121,7 +121,7 @@ In all what follows, $\X = \R^d$. \newline
 We fix here $\pi$ an objective probability density, and an initial probability density $\mu_0$. 
 \subsection{Notations}
 We will denote by $\P_2(\X)$ the set of probability density on $\X$ with finite second order moment i.e. the set of distributions such that $\int ||x||^2 d\mu(x) < \infty$. We assume the objective distribution $\pi$ lives in $\P_2(\X)$, and define the Kullback-Liebler divergence between $\pi_1$ and $\pi_2$ by
-$$\KL(\pi_1||\pi_2) := \E_{\pi_1} [\log \pi_1(x)] - \E_{\pi_1}[\log \pi_2(x)]$$ \newline
+$$\KL(\pi_1||\pi_2) \triangleq \E_{\pi_1} [\log \pi_1(x)] - \E_{\pi_1}[\log \pi_2(x)]$$ \newline
 Let $\A_\pi$ the Stein Operator defined by $\forall \phi \in \H, \forall x \in \X, \A_\pi \phi(x) = \nabla \log \pi(x) \phi(x)^\top + \nabla\cdot \phi(x)$, for some $\H$ we will precise later on. \newline
 We define the Stein class of $\pi$ the subset of functions $\phi$ such that $\lim_{||x||\longrightarrow \infty} \phi(x)\pi(x) = 0$. Note that for every function in the Stein class of $\pi$, we have \begin{equation}
   \E_{x \sim \pi}[\A_\pi \phi (x)] = 0
@@ -135,7 +135,7 @@ Finally, for $\phi : \R^d \longrightarrow \R^d$, we denote by $||\phi||_{op}$ th
 \subsection{Context}
 Let $\mu \in \P_2(\X)$. Given a smooth function $\phi = [\phi_1,...,\phi_d]^\top$, a small perturbation of $\mu$ in the direction of $\phi$ is given by 
 \begin{equation}
-    T_\#\mu_{[T]} := \mu_\#(I+\gamma \phi)_\#\mu,
+    T_\#\mu \triangleq (I+\gamma \phi)_\#\mu,
 \end{equation}
 for a small $\gamma > 0$. \newline
 Recall that $\E_{x \sim \mu}[\A_\pi \phi (x)] = \int_\X \pare*{ \nabla \log \pi(x)^\top \phi(x) + \nabla \cdot \phi(x) } \mu(x) \d x$. 
@@ -173,7 +173,7 @@ where $\A_\pi \otimes f(x) =  f(x) \nabla \log \pi(x) + \nabla f(x)$, is a varia
 Moreover, $\S(\mu, \pi) = \|\phi^*\|_\H$ (complete proof in \ref{proof:KSD}).
 If we know how to sample from $\mu$, we can then approximate $\phi^*$ easily.
 \subsubsection{Back to the problem}
-For $\gamma < \frac{1}{||\phi||_{op}}$, $(I+\gamma \phi)$ is locally one-to-one. We then have that $$\nabla_\gamma \KL(T_\#\mu||\pi)|_{\gamma = 0} = - \E_{x\sim \pi}[\A_\pi \phi(x)]$$ 
+For $\gamma < \frac{1}{||\phi||_{op}}$, $(I+\gamma \phi)$ is locally one-to-one. We then have that: $$\nabla_\gamma \KL(T_\#\mu||\pi)|_{\gamma = 0} = - \E_{x\sim \pi}[\A_\pi \phi(x)].$$ 
 Considering all descent directions on the ball $\{\phi\in \H, ||\phi||^2_{op} \leq \S(\mu,\pi)\}$, the one we will keep for our gradient descent is the one minimizing the gradient of $\KL$, which writes $\phi^*$ as showed just earlier. \newline
 The Stein Variational Gradient Descent (SVGD) algorithm consists
 in an iterative procedure where one apply successive transformations
@@ -377,7 +377,7 @@ such that $X_i \sim \mu_0$ for $i \in \{1, \ldots, N\}$.
 Then, at each iteration $n$, SVGD computes the new particles $X_i^{n+1}$
 as follows:
 \begin{equation}
-X_i^{n+1} = X_i^n - \gamma P_{\hat{\mu}_n} \nabla \log \pare*{ \frac{\hat{\mu}_n}{\pi} }(X_i^n)
+X_i^{n+1} = X_i^n - \gamma P_{\hat{\mu}_n} \nabla \log \pare*{ \frac{\hat{\mu}_n}{\pi} }(X_i^n),
 \label{eq:hat-mu-n}
 \end{equation}
 where $\hat{\mu}_n = \frac{1}{N} \sum_{i=1}^N \delta_{X_i^n} $ is the empirical distribution
@@ -549,18 +549,18 @@ as shown in Figure~\ref{fig:KL-exp2}, with $\lambda = 0.001$.
 
 \section{Discussions}
 We will here discuss more about \cite{main-paper} itself rather than on the SVGD. To us, a few problems appear  which make the paper less understandable for non-expert reseachers on the subject. \newline
-First of all, the necessary background on optimal transport and functional analysis (especially on the notations) can be a barrier to understanding the ideas of the paper. About the notations, there are many differences between \cite{main-paper} and the original paper for SVGD (\cite{Original-SVGD}). Also, both papers base their background in optimal transport on books (\cite{villani2003} \& \cite{villani2008}), which has even different notations. Thus, the workload to understand which notation correspond to which one is quite high. \newline
+First of all, the necessary background on optimal transport and functional analysis (especially on the notations) can be a barrier to understanding the ideas of the paper. About the notations, there are many differences between \cite{main-paper} and the original paper for SVGD \cite{Original-SVGD}. Also, both papers base their background in optimal transport on books (\cite{villani2003} \& \cite{villani2008}), which has even different notations. Thus, the workload to understand which notation correspond to which one is quite high. \newline
 Also, even though the abstract from \cite{main-paper} tries to cover what the paper is about, we found it difficult to really understand where the authors want to bring us reading the paper, as the preliminaries and the necessary background on SVGD take in fact more than half of the paper.
 Yet, one absolutely needs to read \cite{Original-SVGD} and \cite{SVGD-flow} to fully understand the paper's contributions. \newline
 Some misleading typos took us a while to convince ourselves that they are actual errors and not
 just a misunderstanding of the paper, as we are not experts in the field. For example,
 in Equation (8), the authors wrote $\lim_{\norm{x} \to \infty} k(x, x)\pi(x) = 0$ instead of $\lim_{\norm{x} \to \infty} k(x, x)\mu(x) = 0$. \newline
-Finally, even though the experiments are given in annex, they link their it with a GitHub repository, based on the code from \cite{Original-SVGD}, which is not easy to understand, and therefore not reproducible. Indeed, it implements a lot of steps that are not clearly described in any of the three main papers (see \cite{Original-SVGD}, \cite{main-paper} and \cite{SVGD-flow}). \newline
-Overall, this is a nice theoretical paper giving useful insights of SVGD for the future. On the other hand, it is hard to understand for people with lighter background in state-of-the-art bayesian inference.
+Finally, even though the experiments are given in annex, they link their it with a GitHub repository which is not easy to understand at all, and therefore is not reproducible. Also, it is based on the code from \cite{Original-SVGD}, which does not describe properly the steps in the code. \newline
+Overall, this paper is a nice theoretical paper giving useful insights of SVGD for the future. On the other hand, it is hard to understand for people with lighter background in state-of-the-art bayesian inference.
  
 \section{Conclusion}
-SVGD appears to be a competitive method for bayesian inference. \cite{main-paper} allows us to understand better the theory behind SVGD,
-providing new convergence rates for the infinite particles setting, and a first intuition on the convergence of the implementation of the SVGD. However, its properties are not as well known as Langevin Monte Carlo dynamics yet, which is its principal competitor. In the next few years, we can arguably suppose that SVGD dynamics will be understood even better, and replacing Langevin-type algorithms in some research problems, such as black-box variational inference and GANs for instance (see \cite{ccl}). 
+Overall, SVGD appears to be a competitive method for bayesian inference. \cite{main-paper} allows us to understand better the theory behind SVGD,
+providing new convergence rates and a first intuition on the convergence of the implementation of the SVGD. However, its properties are not as well known as Langevin Monte Carlo dynamics yet, which is its principal competitor. In the next few years, we can arguably suppose that SVGD dynamics will be understood even better, and replacing Langevin-type algorithms in some research problems, such as black-box variational inference and GANs for instance (see \cite{ccl}). 
 
 \bibliographystyle{plainnat}
 \bibliography{biblio}
