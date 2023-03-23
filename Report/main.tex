@@ -113,14 +113,17 @@
 
 
 \section{Introduction}
-In this paper we will contextualize and describe the article \cite{main-paper}. This paper brings theoretical results on the SVGD algorithm, where the goal is to approach an unknown probability density $\pi$ by iteratively transforming a arbitrary known density $\mu$. It was first introduced by \cite{Original-SVGD}. Starting from an initial distribution $\mu_0$, this algorithm can be seen as a gradient descent in the Wasserstein space of distributions. On this work, our contributions were multiple: on one side, we provide proofs (see Annex) that were not given or very briefly in main papers (\cite{main-paper}, \cite{Original-SVGD}, and \cite{SVGD-flow}), and on the other side, we re-implemented the given algorithm itself from scratch (the provided code was not reproducible) to understand better the contribution of the paper. \newline
-We will first present the necessary background to understand \cite{main-paper}, and present the original idea of SVGD from \cite{Original-SVGD}. Then, we will focus on the contributions from \cite{main-paper} before discussing on our experiments, and finishing by a more general discussion about SVGD.
+In this paper we will contextualize and describe the article \cite{main-paper}. This paper brings theoretical results on the SVGD algorithm, where the goal is to approach an unknown probability distribution $\pi$ by iteratively transforming a arbitrary known distribution $\mu_0$. It was first introduced by \cite{Original-SVGD}. Starting from an initial distribution $\mu_0$, this algorithm can be seen as a gradient descent in the Wasserstein space of distributions. On this work, our contributions were multiple: on one side, we provide proofs (see Annex) that were not given or very briefly in main papers (\cite{main-paper}, \cite{Original-SVGD}, and \cite{SVGD-flow}), and on the other side, we re-implemented the given algorithm itself from scratch (the provided code was not reproducible) to understand better the contribution of the paper. \newline
+We will first present the necessary background to understand \cite{main-paper}, and present the original idea of SVGD from \cite{Original-SVGD}. Then, we will focus on the contributions from \cite{main-paper} before discussing on our experiments, and finishing by a more general discussion about the paper itself.
 
 \section{SVGD Context (\cite{Original-SVGD})}
-In all what follows, $\X = \R^d$. \newline
-We fix here $\pi$ an objective probability density, and an initial probability density $\mu_0$. 
+We fix here $\pi$ an objective probability distribution, and an initial ditribution $\mu_0$
+over a set $\X$.\\
+In all what follows, $\X = \R^d$, and both $\mu$ and $\pi$ admit a
+density that will also be denoted by $\mu$ and $\pi$ respectively.
+
 \subsection{Notations}
-We will denote by $\P_2(\X)$ the set of probability density on $\X$ with finite second order moment i.e. the set of distributions such that $\int ||x||^2 d\mu(x) < \infty$. We assume the objective distribution $\pi$ lives in $\P_2(\X)$, and define the Kullback-Liebler divergence between $\pi_1$ and $\pi_2$ by
+We will denote by $\P_2(\X)$ the set of probability measure on $\X$ with finite second order moment i.e. the set of distributions such that $\int ||x||^2 d\mu(x) < \infty$. We assume the objective distribution $\pi$ lives in $\P_2(\X)$, and define the Kullback-Liebler divergence between $\pi_1$ and $\pi_2$ by
 $$\KL(\pi_1||\pi_2) \triangleq \E_{\pi_1} [\log \pi_1(x)] - \E_{\pi_1}[\log \pi_2(x)]$$ \newline
 Let $\A_\pi$ the Stein Operator defined by $\forall \phi \in \H, \forall x \in \X, \A_\pi \phi(x) = \nabla \log \pi(x) \phi(x)^\top + \nabla\cdot \phi(x)$, for some $\H$ we will precise later on. \newline
 We define the Stein class of $\pi$ the subset of functions $\phi$ such that $\lim_{||x||\longrightarrow \infty} \phi(x)\pi(x) = 0$. Note that for every function in the Stein class of $\pi$, we have \begin{equation}
@@ -155,13 +158,13 @@ The idea of the original paper of SVGD (\cite{Original-SVGD}) is too choose $\H$
 to maximize $\S(\mu, \pi)$ in the unit ball of $\H$. This is called the Kernel Stein Discrepancy (KSD). \newline
 Let $\H_0$ be a RKHS with a kernel $k(x, x')$ in the Stein class of $\pi$.
 Let $\H = (\H^{(1)}_0, \dots, \H^{(d)}_0)$.
-The objective in (\ref{eq:stein_obj}) is then:
+The objective in \eqref{eq:stein_obj} is then:
 \begin{equation}
   \S(\mu, \pi) =
     \max_{\phi \in \H} \bra*{ \E_{x \sim \mu}[\A_\pi \phi (x)], \; s.t. \; \|\phi\|_{\H} \leq 1 }.
   \label{eq:stein_ksd_obj}
 \end{equation}
-Within this framework, one can show that the optimal solution of (\ref{eq:stein_ksd_obj})
+Within this framework, one can show that the optimal solution of \eqref{eq:stein_ksd_obj}
 is given by:
 \begin{equation}
   \phi(x) = \frac{\phi^*(x)}{\|\phi^*\|_{\H}}
@@ -177,13 +180,13 @@ For $\gamma < \frac{1}{||\phi||_{op}}$, $(I+\gamma \phi)$ is locally one-to-one.
 Considering all descent directions on the ball $\{\phi\in \H, ||\phi||^2_{op} \leq \S(\mu,\pi)\}$, the one we will keep for our gradient descent is the one minimizing the gradient of $\KL$, which writes $\phi^*$ as showed just earlier. \newline
 The Stein Variational Gradient Descent (SVGD) algorithm consists
 in an iterative procedure where one apply successive transformations
-to an initial density $\mu_0$ following
+to an initial probability measure $\mu_0$ following
 the trajectory $\phi^*$ that minimizes the gradient of the Kullback-Leibler divergence:
 \begin{equation}
   \mu_{n+1} = \pare*{ I + \gamma \phi^* }_\# \mu_n.
   \label{eq:mu-n}
 \end{equation}
-To be able to perform a SVGD iteration, the unknown density $\pi$ only appears
+To be able to perform a SVGD iteration, the unknown distribution $\pi$ only appears
 in $\nabla \log \pi(x)$. This is very convenient as, in a Bayesian framework,
 $\pi$ could be a posterior distribution where the normalization constant is not known.
 However, $\nabla \log \pi(x) = \nabla \log \frac{\pi'}{Z} = \nabla \log \pi'$,
@@ -286,7 +289,7 @@ of time i.e. when $\gamma \to 0$ in the SVGD iteration (\ref{eq:mu-n}).
   \Stein = \norm*{S_\mu \nabla \log \frac{\mu}{\pi}}_\H^2.
   $$
   Note that $\Stein$ is the square of the optimum value of the
-  Kernelized Stein Discrepancy defined in (\ref{eq:stein_ksd_sol}).
+  Kernelized Stein Discrepancy defined in \eqref{eq:stein_ksd_sol}.
 \end{definition}
 
 The authors proved the following proposition:
@@ -309,7 +312,7 @@ for the average of $\Stein$ over time:
   \label{eq:convergence-avg-stein}
 \end{equation}
 
-(It can be easily shown by integrating \ref{eq:KL-time-diff}).
+(It can be easily shown by integrating \eqref{eq:KL-time-diff}).
 However, for the convergence of $I_{Stein}(\mu_t | \pi)$ to be fast,
 $\pi$ must satisfy the Stein log-Sobolev inequality:
 
@@ -339,7 +342,7 @@ assuming $\pi$ satisfies the Stein log-Sobolev inequality.
 
 \subsection{SVGD in discrete time}
 We go back to the original setting of SVGD, where $\mu_n$ is a discrete
-time function, as defined in (\ref{eq:mu-n}).\\
+time function, as defined in \eqref{eq:mu-n}.\\
 
 The authors defined the following mild assumptions:
 \begin{itemize}
@@ -366,7 +369,7 @@ but the authors proved it using differential calculus in the Wasserstein space,
 showing a more direct link between the descent lemma and the 
 Wasserstein gradient flow: $v_t \triangleq -P_{\mu_t} \nabla \log \frac{\mu_t}{\pi}$.
 This lemma also implies the convergence for the average of $\Stein$
-defined in (\ref{eq:convergence-avg-stein}), but for discrete time (replacing the
+defined in \eqref{eq:convergence-avg-stein}, but for discrete time (replacing the
 integral by a sum).
 
 \subsection{Finite particle setting}
@@ -383,8 +386,8 @@ X_i^{n+1} = X_i^n - \gamma P_{\hat{\mu}_n} \nabla \log \pare*{ \frac{\hat{\mu}_n
 where $\hat{\mu}_n = \frac{1}{N} \sum_{i=1}^N \delta_{X_i^n} $ is the empirical distribution
 of the particles. Under some Lipschitz assumptions, the following proposition holds:
 \begin{proposition}
-  Let $n > 0$ and $T > 0$. Let $\mu_n$ and $\hat{\mu}_n$ defined in (\ref{eq:mu-n}) and
-  (\ref{eq:hat-mu-n}) respectively. Then, for any $0 \leq n \leq \frac{T}{\gamma}$:
+  Let $n > 0$ and $T > 0$. Let $\mu_n$ and $\hat{\mu}_n$ defined in \eqref{eq:mu-n} and
+  \eqref{eq:hat-mu-n} respectively. Then, for any $0 \leq n \leq \frac{T}{\gamma}$:
   \begin{equation}
     \E\sq*{ \W_2^2(\mu_n, \hat{\mu}_n) } \leq \frac{1}{2}
       \pare*{ \frac{1}{\sqrt{N}} \sqrt{var(\mu_0)} e^{LT} } \pare*{e^{2LT} - 1},
@@ -409,7 +412,7 @@ centered on $-10$ and with a variance of $1$.
 Then, they used the SVGD algorithm to minimize the $\KL$ divergence
 between the empirical distribution of the particles and
 a Gaussian mixture model with two modes.
-They also empirically verified that the inequality (\ref{eq:convergence-avg-stein})
+They also empirically verified that the inequality \eqref{eq:convergence-avg-stein}
 holds, which seems to be the case in their example.
 They used the code provided in the original paper (\cite{Original-SVGD}).\\
 
@@ -418,10 +421,10 @@ Indeed, the original code is rather complex and implements
 many features that does not seem to be explicitly detailed in the paper.
 Therefore, we have implemented the SVGD algorithm only with the information
 provided in the studied paper (\cite{main-paper}).
-We update the particles using (\ref{eq:hat-mu-n}) and
+We update the particles using \eqref{eq:hat-mu-n} and
 we use PyTorch to compute the gradients of the kernel and $\log \pi$.
 We also wanted to verify that $\KL(\hat{\mu}_n || \pi)$ exponentially
-decreases, as shows (\ref{eq:exp-KL}).
+decreases, as shows \eqref{eq:exp-KL}.
 To do so, we made two experiments with different particles
 distributions. Both are Gaussian distributions, the first one
 is the same as the one used in the studied paper, and the second one
@@ -444,7 +447,7 @@ the algorithm does not foresee the second mode and get stuck in a local minimum
 However, the $\KL$ divergence decreases exponentially, until it reaches
 the local minimum. This is illustrated in Figure~\ref{fig:KL-exp1},
 where we empirically set $\lambda = 0.0008$.
-As (\ref{eq:W2-bounds}) suggests, use more particles
+As \eqref{eq:W2-bounds} suggests, use more particles
 should solve the issue, but it would require too much of it to be
 computationally feasible in practice.\\
 
@@ -556,7 +559,7 @@ Some misleading typos took us a while to convince ourselves that they are actual
 just a misunderstanding of the paper, as we are not experts in the field. For example,
 in Equation (8), the authors wrote $\lim_{\norm{x} \to \infty} k(x, x)\pi(x) = 0$ instead of $\lim_{\norm{x} \to \infty} k(x, x)\mu(x) = 0$. \newline
 Finally, even though the experiments are given in annex, they link their it with a GitHub repository which is not easy to understand at all, and therefore is not reproducible. Also, it is based on the code from \cite{Original-SVGD}, which does not describe properly the steps in the code. \newline
-Overall, this paper is a nice theoretical paper giving useful insights of SVGD for the future. On the other hand, it is hard to understand for people with lighter background in state-of-the-art bayesian inference.
+Overall, this is a nice theoretical paper giving useful insights of SVGD for the future. On the other hand, it is hard to understand for people with lighter background in state-of-the-art bayesian inference.
  
 \section{Conclusion}
 Overall, SVGD appears to be a competitive method for bayesian inference. \cite{main-paper} allows us to understand better the theory behind SVGD,
@@ -568,7 +571,7 @@ providing new convergence rates and a first intuition on the convergence of the 
 \appendix
 
 \section{Proofs}
-\subsection{Proof of \ref{eq:stein_id}}
+\subsection{Proof of \eqref{eq:stein_id}}
 \begin{proof}\label{proof:stein_id}
   \begin{align*}
     \E_{x \sim \mu}[\A_\mu \phi (x)] &=
@@ -585,7 +588,7 @@ providing new convergence rates and a first intuition on the convergence of the 
     &= 0.
   \end{align*}
 \end{proof}
-\subsection{Proof of \ref{eq:stein_ksd_sol}}
+\subsection{Proof of \eqref{eq:stein_ksd_sol}}
 \begin{proof}\label{proof:KSD}
   We first need to prove that
   $$
@@ -637,7 +640,7 @@ providing new convergence rates and a first intuition on the convergence of the 
 \end{equation*}
 \end{proof}
 
-\subsection{Proof of $\H \subset L^2(\mu)$ (\ref{def:S-mu})}\label{pro:H-L2}
+\subsection{Proof of $\H \subset L^2(\mu)$ (Definition \ref{def:S-mu})}\label{pro:H-L2}
 \begin{proof}
   We want to prove that, $\forall f \in \H$, 
   $\forall \mu \in \P_2(\X)$, $\int_\X f(x)^2 \d \mu(x) < \infty$.
@@ -653,7 +656,7 @@ providing new convergence rates and a first intuition on the convergence of the 
   \end{align*}
 \end{proof}
 
-\subsection{Proof of \ref{eq:phi-Smu}}\label{pro:phi-Smu}
+\subsection{Proof of \eqref{eq:phi-Smu}}\label{pro:phi-Smu}
 \begin{proof}
     Let $k$ in the Stein class of $\mu$. Thus:
     \begin{equation}
@@ -684,7 +687,7 @@ providing new convergence rates and a first intuition on the convergence of the 
     &= \int_\X \diff{\mu_t(x)}{t} \log \frac{\mu_t(x)}{\pi(x)} \d x
    , \pare*{\text{ $\mu_t$ is a probability measure, so } \forall t, \int_\X \d \mu_t(x) = 1}.
   \end{align*}
-  Furthermore, as $\mu_t$ satisfies the continuity equation~(\eqref{def:continuity-equation})
+  Furthermore, as $\mu_t$ satisfies the continuity equation~(\ref{def:continuity-equation})
   where $v_t = -P_{\mu_t} \nabla \log \frac{\mu}{\pi}$, we have:
   \begin{align*}
     \diff{KL(\mu_t \| \pi)}{t} &= -\int_\X \nabla \cdot (\mu_t(x) v_t(x)) \log \frac{\mu_t(x)}{\pi(x)} \d x \\
@@ -700,7 +703,7 @@ providing new convergence rates and a first intuition on the convergence of the 
   \end{align*}
 \end{proof}
 
-\subsection{Proof of \ref{eq:exp-KL}}\label{pro:exp-KL}
+\subsection{Proof of \eqref{eq:exp-KL}}\label{pro:exp-KL}
 \begin{proof}
   Assume that $\pi$ satisfies the Stein log-Sobolev inequality.
   We have
