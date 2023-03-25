@@ -1,6 +1,7 @@
 ### Source code for the Bayesion Machine Learning project on Stein Variational Gradient Descent
 
-Analysis of the paper [A Non-Asymptotic Analysis for Stein Variational Gradient Descent](https://arxiv.org/pdf/2006.09797.pdf) for the Bayesian Machine Learning course at the MVA master at ENS Paris-Saclay.
+Analysis of the paper [A Non-Asymptotic Analysis for Stein Variational Gradient Descent](https://arxiv.org/pdf/2006.09797.pdf), and detailed summary
+of the theoretical results of SVGD for the Bayesian Machine Learning course at the MVA master at ENS Paris-Saclay.
 
 One might want to read the [report](Report/main.pdf) first.
 
