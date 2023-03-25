@@ -62,7 +62,7 @@
 \newtheorem{lemma}{Lemma}
 
 
-\title{Non-asymptotic Stein Variational Gradient Descent\\
+\title{Non-asymptotic analysis Stein Variational Gradient Descent\\
 {\it Project report}}
 
 
@@ -117,13 +117,13 @@ In this paper we will contextualize and describe the article \cite{main-paper}. 
 We will first present the necessary background to understand \cite{main-paper}, and present the original idea of SVGD from \cite{Original-SVGD}. Then, we will focus on the contributions from \cite{main-paper} before discussing on our experiments, and finishing by a more general discussion about the paper itself.
 
 \section{SVGD Context (\cite{Original-SVGD})}
-We fix here $\pi$ an objective probability distribution, and an initial ditribution $\mu_0$
+We fix here $\pi$ an objective probability distribution, and an initial distribution $\mu_0$
 over a set $\X$.\\
 In all what follows, $\X = \R^d$, and both $\mu$ and $\pi$ admit a
 density that will also be denoted by $\mu$ and $\pi$ respectively.
 
 \subsection{Notations}
-We will denote by $\P_2(\X)$ the set of probability measure on $\X$ with finite second order moment i.e. the set of distributions such that $\int ||x||^2 d\mu(x) < \infty$. We assume the objective distribution $\pi$ lives in $\P_2(\X)$, and define the Kullback-Liebler divergence between $\pi_1$ and $\pi_2$ by
+We will denote by $\P_2(\X)$ the set of probability measure on $\X$ with finite second order moment i.e. the set of distributions such that $\int ||x||^2 d\mu(x) < \infty$. We assume the objective distribution $\pi$ lives in $\P_2(\X)$, and define the Kullback-Leibler divergence between $\pi_1$ and $\pi_2$ by
 $$\KL(\pi_1||\pi_2) \triangleq \E_{\pi_1} [\log \pi_1(x)] - \E_{\pi_1}[\log \pi_2(x)]$$ \newline
 Let $\A_\pi$ the Stein Operator defined by $\forall \phi \in \H, \forall x \in \X, \A_\pi \phi(x) = \nabla \log \pi(x) \phi(x)^\top + \nabla\cdot \phi(x)$, for some $\H$ we will precise later on. \newline
 We define the Stein class of $\pi$ the subset of functions $\phi$ such that $\lim_{||x||\longrightarrow \infty} \phi(x)\pi(x) = 0$. Note that for every function in the Stein class of $\pi$, we have \begin{equation}
@@ -562,7 +562,7 @@ Finally, even though the experiments are given in annex, they link their it with
 Overall, this is a nice theoretical paper giving useful insights of SVGD for the future. On the other hand, it is hard to understand for people with lighter background in state-of-the-art bayesian inference.
  
 \section{Conclusion}
-Overall, SVGD appears to be a competitive method for bayesian inference. \cite{main-paper} allows us to understand better the theory behind SVGD,
+Overall, SVGD appears to be a competitive method for Bayesian inference. \cite{main-paper} allows us to understand better the theory behind SVGD,
 providing new convergence rates and a first intuition on the convergence of the implementation of the SVGD. However, its properties are not as well known as Langevin Monte Carlo dynamics yet, which is its principal competitor. In the next few years, we can arguably suppose that SVGD dynamics will be understood even better, and replacing Langevin-type algorithms in some research problems, such as black-box variational inference and GANs for instance (see \cite{ccl}). 
 
 \bibliographystyle{plainnat}
