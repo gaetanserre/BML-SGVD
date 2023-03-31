@@ -458,98 +458,6 @@ to take into account both mode of $\pi$. This is illustrated in
 Figure~\ref{fig:exp2}. The $\KL$ divergence also decreases exponentially,
 as shown in Figure~\ref{fig:KL-exp2}, with $\lambda = 0.001$.
 
-
-\begin{figure}[H]
-  \centering
-  \begin{subfigure}{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{exp1-0.pdf}
-    \caption{Initial distribution}
-  \end{subfigure}
-  \begin{subfigure}{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{exp1-50.pdf}
-    \caption{Iteration 50}
-  \end{subfigure}
-  \\
-  \begin{subfigure}{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{exp1-530.pdf}
-    \caption{Iteration 530}
-  \end{subfigure}
-  \begin{subfigure}{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{exp1-1000.pdf}
-    \caption{Iteration 1000 ($\delta$ distribution not visible)}
-  \end{subfigure}
-
-  \caption{Initial distribution and several iterations of the SVGD algorithm
-    of the first experiment. One can see that the
-    algorithm get stuck in a local minimum, making $\hat{\mu}_t$
-    only follow the first modes of $\pi$, until it becomes a Dirac distribution
-    centered on $-5$.}
-  \label{fig:exp1}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.6\textwidth]{norm_direction.pdf}
-  \caption{2-norm of the update direction of the particles
-    for the first experiment. It quickly converges to $0$, corroborating the fact that
-    the algorithm get stuck in a local minimum. Spikes happen when particles "fall" in a mode.}
-  \label{fig:norm-update}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.5\textwidth]{exp1-KL.pdf}
-  \caption{Exponential decrease of the $\KL$ divergence
-    over time for the first experiment. $\lambda=0.0008$.}
-  \label{fig:KL-exp1}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \begin{subfigure}{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{exp2-0.pdf}
-    \caption{Initial distribution}
-  \end{subfigure}
-  \begin{subfigure}{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{exp2-1000.pdf}
-    \caption{Iteration 1000}
-  \end{subfigure}
-
-  \caption{Initial distribution and last iteration of the SVGD algorithm
-    of the second experiment. One can see that the
-    algorithm is able to take into account both modes of $\pi$.}
-  \label{fig:exp2}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.5\textwidth]{exp2-KL.pdf}
-  \caption{Exponential decrease of the $\KL$ divergence
-    over time for the second experiment. $\lambda=0.001$.}
-  \label{fig:KL-exp2}
-\end{figure}
-
-\begin{table}[H]
-  \centering
-  \begin{tabular}{c|c}
-    \hline
-    $\pi$ & Mix Gaussian \\
-    N & 100 \\
-    $\gamma$ & 0.1 \\
-    $k$ & RBF kernel \\
-    \# iter & 1000 \\
-    \hline
-  \end{tabular}
-  \caption{Hyperparameters used for the SVGD experiments.}
-  \label{tab:hyperparameters}
-\end{table}
-
 \section{Discussions}
 We will here discuss more about \cite{main-paper} itself rather than on the SVGD. To us, a few problems appear  which make the paper less understandable for non-expert reseachers on the subject. \newline
 First of all, the necessary background on optimal transport and functional analysis (especially on the notations) can be a barrier to understanding the ideas of the paper. About the notations, there are many differences between \cite{main-paper} and the original paper for SVGD \cite{Original-SVGD}. Also, both papers base their background in optimal transport on books (\cite{villani2003} \& \cite{villani2008}), which has even different notations. Thus, the workload to understand which notation correspond to which one is quite high. \newline
@@ -563,7 +471,7 @@ Overall, this is a nice theoretical paper giving useful insights of SVGD for the
  
 \section{Conclusion}
 Overall, SVGD appears to be a competitive method for Bayesian inference. \cite{main-paper} allows us to understand better the theory behind SVGD,
-providing new convergence rates and a first intuition on the convergence of the implementation of the SVGD. However, its properties are not as well known as Langevin Monte Carlo dynamics yet, which is its principal competitor. In the next few years, we can arguably suppose that SVGD dynamics will be understood even better, and replacing Langevin-type algorithms in some research problems, such as black-box variational inference and GANs for instance (see \cite{ccl}). 
+providing new convergence rates and a first intuition on the convergence of the implementation of the SVGD. However, its properties are not as well known as Langevin Monte Carlo dynamics yet, which is its principal competitor. In the next few years, we can arguably suppose that SVGD dynamics will be understood even better, and replacing Langevin-type algorithms in some research problems, such as black-box variational inference and GANs for instance (see \cite{ccl}).
 
 \bibliographystyle{plainnat}
 \bibliography{biblio}
@@ -720,6 +628,101 @@ providing new convergence rates and a first intuition on the convergence of the 
   \end{align*}
     
 \end{proof}
+
+\section{Figures of the experiments}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{exp1-0.pdf}
+    \caption{Initial distribution}
+  \end{subfigure}
+  \begin{subfigure}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{exp1-50.pdf}
+    \caption{Iteration 50}
+  \end{subfigure}
+  \\
+  \begin{subfigure}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{exp1-530.pdf}
+    \caption{Iteration 530}
+  \end{subfigure}
+  \begin{subfigure}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{exp1-1000.pdf}
+    \caption{Iteration 1000 ($\delta$ distribution not visible)}
+  \end{subfigure}
+
+  \caption{Initial distribution and several iterations of the SVGD algorithm
+    of the first experiment. One can see that the
+    algorithm get stuck in a local minimum, making $\hat{\mu}_t$
+    only follow the first modes of $\pi$, until it becomes a Dirac distribution
+    centered on $-5$.}
+  \label{fig:exp1}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{norm_direction.pdf}
+  \caption{2-norm of the update direction of the particles
+    for the first experiment. It quickly converges to $0$, corroborating the fact that
+    the algorithm get stuck in a local minimum. Spikes happen when particles "fall" in a mode.}
+  \label{fig:norm-update}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{exp1-KL.pdf}
+  \caption{Exponential decrease of the $\KL$ divergence
+    over time for the first experiment. $\lambda=0.0008$.}
+  \label{fig:KL-exp1}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{exp2-0.pdf}
+    \caption{Initial distribution}
+  \end{subfigure}
+  \begin{subfigure}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{exp2-1000.pdf}
+    \caption{Iteration 1000}
+  \end{subfigure}
+
+  \caption{Initial distribution and last iteration of the SVGD algorithm
+    of the second experiment. One can see that the
+    algorithm is able to take into account both modes of $\pi$.}
+  \label{fig:exp2}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{exp2-KL.pdf}
+  \caption{Exponential decrease of the $\KL$ divergence
+    over time for the second experiment. $\lambda=0.001$.}
+  \label{fig:KL-exp2}
+\end{figure}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{c|c}
+    \hline
+    $\pi$ & Mix Gaussian \\
+    N & 100 \\
+    $\gamma$ & 0.1 \\
+    $k$ & RBF kernel \\
+    \# iter & 1000 \\
+    \hline
+  \end{tabular}
+  \caption{Hyperparameters used for the SVGD experiments.}
+  \label{tab:hyperparameters}
+\end{table}
+
+
 
 
 \end{document}
