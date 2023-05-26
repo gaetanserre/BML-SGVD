@@ -142,7 +142,7 @@ Let $\mu \in \P_2(\X)$. Given a smooth function $\phi = [\phi_1,...,\phi_d]^\top
 \end{equation}
 for a small $\gamma > 0$. \newline
 Recall that $\E_{x \sim \mu}[\A_\pi \phi (x)] = \int_\X \pare*{ \nabla \log \pi(x)^\top \phi(x) + \nabla \cdot \phi(x) } \mu(x) \d x$. 
-As soon as $\mu$ is not in the Stein class of $\pi$, one can show that $\left | \E_{x \sim \mu}[\A_\pi \phi (x)] > 0 \right |$, increasing w.r.t. the difference between $\mu$ and $\pi$. (proof in \ref{proof:Esp_distance}). \newline
+As soon as $\mu$ is different from $\pi$, one can show that $\left | \E_{x \sim \mu}[\A_\pi \phi (x)] \right |$ increases w.r.t. the difference between $\mu$ and $\pi$. (proof in \ref{proof:Esp_distance}). \newline
 Therefore, the problem we want to solve is to find
 \begin{equation}
   \mu^* = \arg\min_{\mu} \: \S(\mu, \pi) =
@@ -153,6 +153,7 @@ for a certain class $\H$ of functionals.
 Indeed, the above objective is equal to $0$ if and only if $\mu = \pi$ and greater than $0$ otherwise,
 with $\H$ sufficiently large. A question now raises: how to choose $\H$ to be rich enough and
 still tractable? \newline
+
 \subsubsection{Choice of $\H$}\label{sec:RKHS}
 The idea of the original paper of SVGD (\cite{Original-SVGD}) is too choose $\H$ a RKHS and
 to maximize $\S(\mu, \pi)$ in the unit ball of $\H$. This is called the Kernel Stein Discrepancy (KSD). \newline
@@ -175,8 +176,9 @@ is given by:
 where $\A_\pi \otimes f(x) =  f(x) \nabla \log \pi(x) + \nabla f(x)$, is a variant of Stein operator. We also know that $\phi^*$ is in the Stein class of $\pi$ as $k$ is.
 Moreover, $\S(\mu, \pi) = \|\phi^*\|_\H$ (complete proof in \ref{proof:KSD}).
 If we know how to sample from $\mu$, we can then approximate $\phi^*$ easily.
+
 \subsubsection{Back to the problem}
-For $\gamma < \frac{1}{||\phi||_{op}}$, $(I+\gamma \phi)$ is locally one-to-one. We then have that: $$\nabla_\gamma \KL(T_\#\mu||\pi)|_{\gamma = 0} = - \E_{x\sim \pi}[\A_\pi \phi(x)].$$ 
+For $\gamma < \frac{1}{||\phi||_{op}}$, $(I+\gamma \phi)$ is locally one-to-one. We then have that: $$\nabla_\gamma \KL(T_\#\mu||\pi)|_{\gamma = 0} = - \E_{x\sim \mu}[\A_\pi \phi(x)].$$ 
 Considering all descent directions on the ball $\{\phi\in \H, ||\phi||^2_{op} \leq \S(\mu,\pi)\}$, the one we will keep for our gradient descent is the one minimizing the gradient of $\KL$, which writes $\phi^*$ as showed just earlier. \newline
 The Stein Variational Gradient Descent (SVGD) algorithm consists
 in an iterative procedure where one apply successive transformations
@@ -531,7 +533,8 @@ providing new convergence rates and a first intuition on the convergence of the 
 \end{proof}
 \subsection{Proof that $\E_{x \sim \mu}[\A_\pi \phi (x)]$ measures the disperancy between $\mu$ and $\pi$}
 \begin{proof}\label{proof:Esp_distance}
-    \begin{equation*}
+  We assume that $\phi$ is not in the Stein class of $\mu$ in the general case.
+  \begin{equation*}
   \begin{split}
     \E_{x \sim \mu}[\A_\pi \phi (x)] &=
       \int_\X \pare*{ \nabla \log \pi(x)^\top \phi(x) + \nabla \cdot \phi(x) } \mu(x) \d x \\
