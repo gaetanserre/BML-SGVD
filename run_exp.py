@@ -15,6 +15,7 @@ from Adam import Adam
 
 def plot_figures(x, pdf, i, fig_path):
     plt.style.use("seaborn-v0_8")
+    plt.figure(figsize=(10, 6))
     if i == 0:
         label = "$\mu_{" + str(i) + "}$"
     else:
@@ -31,8 +32,8 @@ def plot_figures(x, pdf, i, fig_path):
     plt.ylim(0, 0.6)
     plt.xlabel("$\mathcal{X}$")
     plt.legend()
-    plt.savefig(fig_path + "figures/figure_" + str(i) + ".png", bbox_inches="tight")
-    plt.savefig(fig_path + "figures/figure_" + str(i) + ".svg", bbox_inches="tight")
+    plt.savefig(fig_path + "figures/svgd_" + str(i) + ".png", bbox_inches="tight")
+    plt.savefig(fig_path + "figures/svgd_" + str(i) + ".svg", bbox_inches="tight")
     plt.clf()
 
 
@@ -84,6 +85,7 @@ def experiment(x, pdf, dlogpdf, nb_iter, eta, kernel, lamb, fig_path):
     ### Plot figures
     plot_figures(x, pdf, nb_iter, fig_path)
 
+    plt.figure(figsize=(10, 6))
     exp_bounds = [np.exp(-2 * lamb * t) * KL[0] for t in range(len(KL))]
     plt.plot(KL, label="$KL(\pi||\hat{\mu}_t)$")
     plt.plot(exp_bounds, "--", label="$e^{-2\lambda t}KL(\pi||\mu_0)$")
