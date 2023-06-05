@@ -10,11 +10,7 @@ We also provide an implementation of the SVGD algorithm using Numpy.
 #### Usage
 Install the required packages by running:
 ```bash
-pip install numpy scipy seaborn tqdm matplotlib
-```
-if you have a GPU, or
-```bash
-pip install numpy scipy seaborn tqdm matplotlib
+pip install -r requirements.txt
 ```
 if you don't.
 
