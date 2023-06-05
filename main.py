@@ -2,33 +2,61 @@
 # Created in 2023 by Gaëtan Serré
 #
 
-import torch
 import sys
 
 from kernel import rbf
 from run_exp import experiment
-from utils import get_device
+
+import numpy as np
+import scipy
+
+
+class Mix:
+    def __init__(self, means, std, pi):
+        self.means = means
+        self.std = std
+        self.pi = pi
+
+    def pdf(self, x):
+        return np.sum(
+            [
+                self.pi[i] * scipy.stats.norm.pdf(x, self.means[i], self.std[i])
+                for i in range(len(self.means))
+            ],
+            axis=0,
+        ).reshape(-1, 1)
+
+    def dlogpdf(self, x):
+        C = self.pdf(x)
+        D = np.sum(
+            [
+                self.pi[i]
+                * scipy.stats.norm.pdf(x, self.means[i], self.std[i])
+                * -(x - self.means[i])
+                / self.std[i] ** 2
+                for i in range(len(self.means))
+            ],
+            axis=0,
+        ).reshape(-1, 1)
+        return D / C
+
 
 if __name__ == "__main__":
-    device = get_device()
+    mix = Mix([-2, 2], [1, 1], [1 / 3, 2 / 3])
 
-    w = torch.distributions.Categorical(torch.tensor([1 / 5, 4 / 5], device=device))
-    means = torch.tensor([-5, 5]).to(device)
-    std = torch.tensor([1, 1]).to(device)
-    mix = torch.distributions.MixtureSameFamily(
-        w, torch.distributions.Normal(means, std)
-    )
-
-    n_particles = 100
-    eta = 0.06
+    n_particles = 1000
+    eta = 0.99
     kernel = rbf
 
     ### Experiment 1
-    x = torch.distributions.Normal(-10, 1).sample((n_particles,)).to(device)
-    lamb = 0.0008
-    experiment(x, mix.log_prob, int(sys.argv[1]), eta, kernel, lamb, "exp1/")
+    x = np.random.uniform(
+        -10, 10, (n_particles, 1)
+    )  # np.random.normal(-10, 1, (n_particles, 1))
+
+    lamb = 0.008
+    experiment(x, mix.pdf, mix.dlogpdf, int(sys.argv[1]), eta, kernel, lamb, "exp1/")
 
     ### Experiment 2
-    x = torch.distributions.Normal(0, 0.3).sample((n_particles,)).to(device)
-    lamb = 0.001
-    experiment(x, mix.log_prob, int(sys.argv[1]), eta, kernel, lamb, "exp2/")
+    x = np.random.normal(0, 0.3, (n_particles, 1))
+    lamb = 0.01
+    experiment(x, mix.pdf, mix.dlogpdf, int(sys.argv[1]), eta, kernel, lamb, "exp2/")

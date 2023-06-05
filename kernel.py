@@ -2,14 +2,12 @@
 # Created in 2023 by Gaëtan Serré
 #
 
-import torch
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
-from utils import get_device
 
 
 def rbf(x, h=-1):
-    x = x.cpu().detach().numpy().reshape(-1, 1)
+    x = x.reshape(-1, 1)
     sq_dist = pdist(x)
     pairwise_dists = squareform(sq_dist) ** 2
     if h < 0:  # if h < 0, using median trick
@@ -23,7 +21,4 @@ def rbf(x, h=-1):
         x.shape[0], x.shape[1]
     ) / (h**2)
 
-    device = get_device()
-    Kxy = Kxy.astype(np.float32)
-    dxkxy = dxkxy.astype(np.float32).reshape(-1)
-    return torch.from_numpy(Kxy).to(device), torch.from_numpy(dxkxy).to(device)
+    return Kxy, dxkxy

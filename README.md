@@ -5,16 +5,16 @@ of the theoretical results of SVGD for the Bayesian Machine Learning course at t
 
 One might want to read the [report](Report/report.pdf) first.
 
-We also provide an implementation of the SVGD algorithm using PyTorch.
+We also provide an implementation of the SVGD algorithm using Numpy.
 
 #### Usage
 Install the required packages by running:
 ```bash
-pip install numpy scipy seaborn tqdm matplotlib --pre torch --force-reinstall --index-url https://download.pytorch.org/whl/nightly/cu117
+pip install numpy scipy seaborn tqdm matplotlib
 ```
 if you have a GPU, or
 ```bash
-pip install numpy scipy seaborn tqdm matplotlib --pre torch --force-reinstall --index-url https://download.pytorch.org/whl/nightly/cpu
+pip install numpy scipy seaborn tqdm matplotlib
 ```
 if you don't.
 

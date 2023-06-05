@@ -424,7 +424,6 @@ many features that does not seem to be explicitly detailed in the paper.
 Therefore, we have implemented the SVGD algorithm only with the information
 provided in the studied paper (\cite{main-paper}).
 We update the particles using \eqref{eq:hat-mu-n} and
-we use PyTorch to compute the gradients of the kernel and $\log \pi$.
 We also wanted to verify that $\KL(\hat{\mu}_n || \pi)$ exponentially
 decreases, as shows \eqref{eq:exp-KL}.
 To do so, we made two experiments with different particles
