@@ -26,7 +26,7 @@ def plot_figures(x, pdf, i, fig_path):
 
     x = np.linspace(-30, 30, 1000)
     y = pdf(x)
-    plt.plot(x, y, "--", label="$\pi$")
+    plt.plot(x, y, color="red", label="$\pi$")
 
     plt.xlim(-15, 15)
     plt.ylim(0, 0.6)
