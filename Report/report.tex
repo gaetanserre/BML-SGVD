@@ -595,6 +595,8 @@ providing new convergence rates and a first intuition on the convergence of the 
     &= \int_\X \diff{\mu_t(x)}{t} \log \frac{\mu_t(x)}{\pi(x)} \d x
       + \int_\X \diff{\mu_t(x)}{t} \d x \\
     &= \int_\X \diff{\mu_t(x)}{t} \log \frac{\mu_t(x)}{\pi(x)} \d x
+      + \diff{}{t} \int_\X \mu_t \d x \\
+    &= \int_\X \diff{\mu_t(x)}{t} \log \frac{\mu_t(x)}{\pi(x)} \d x
    , \pare*{\text{ $\mu_t$ is a probability measure, so } \forall t, \int_\X \d \mu_t(x) = 1}.
   \end{align*}
   Furthermore, as $\mu_t$ satisfies the continuity equation~(\ref{def:continuity-equation})
