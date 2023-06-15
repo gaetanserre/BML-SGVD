@@ -125,7 +125,7 @@ density that will also be denoted by $\mu$ and $\pi$ respectively.
 \subsection{Notations}
 We will denote by $\P_2(\X)$ the set of probability measure on $\X$ with finite second order moment i.e. the set of distributions such that $\int ||x||^2 d\mu(x) < \infty$. We assume the objective distribution $\pi$ lives in $\P_2(\X)$, and define the Kullback-Leibler divergence between $\pi_1$ and $\pi_2$ by
 $$\KL(\pi_1||\pi_2) \triangleq \E_{\pi_1} [\log \pi_1(x)] - \E_{\pi_1}[\log \pi_2(x)]$$ \newline
-Let $\A_\pi$ the Stein Operator defined by $\forall \phi \in \H, \forall x \in \X, \A_\pi \phi(x) = \nabla \log \pi(x) \phi(x)^\top + \nabla\cdot \phi(x)$, for some $\H$ we will precise later on. \newline
+Let $\A_\pi$ the Stein Operator defined by $\forall \phi \in \H, \forall x \in \X, \A_\pi \phi(x) = \nabla \log \pi(x)^\top \phi(x) + \nabla\cdot \phi(x)$, for some $\H$ we will precise later on. \newline
 We define the Stein class of $\pi$ the subset of functions $\phi$ such that $\lim_{||x||\longrightarrow \infty} \phi(x)\pi(x) = 0$. Note that for every function in the Stein class of $\pi$, we have \begin{equation}
   \E_{x \sim \pi}[\A_\pi \phi (x)] = 0
   \label{eq:stein_id}
