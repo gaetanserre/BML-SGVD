@@ -149,14 +149,14 @@ Therefore, the problem we want to solve is to find
     \arg\min_{\mu} \: \max_{\phi \in \H} \bra*{ \E_{x \sim \mu}[\A_\pi \phi (x)] },
   \label{eq:stein_obj}
 \end{equation}
-for a certain class $\H$ of functionals.
+for a certain class $\H$ of functions.
 Indeed, the above objective is equal to $0$ if and only if $\mu = \pi$ and greater than $0$ otherwise,
 with $\H$ sufficiently large. A question now raises: how to choose $\H$ to be rich enough and
 still tractable? \newline
 
 \subsubsection{Choice of $\H$}\label{sec:RKHS}
 The idea of the original paper of SVGD (\cite{Original-SVGD}) is too choose $\H$ a RKHS and
-to maximize $\S(\mu, \pi)$ in the unit ball of $\H$. This is called the Kernel Stein Discrepancy (KSD). \newline
+to maximize $\S(\mu, \pi)$ in the unit ball of $\H$. This is called the Kernelized Stein Discrepancy (KSD). \newline
 Let $\H_0$ be a RKHS with a kernel $k(x, x')$ in the Stein class of $\pi$.
 Let $\H = (\H^{(1)}_0, \dots, \H^{(d)}_0)$.
 The objective in \eqref{eq:stein_obj} is then:
@@ -271,7 +271,7 @@ $$
 \sca*{f, \iota g}_{L^2(\mu)} = \sca*{\iota^* f, g}_\H = \sca*{S_\mu f, g}_\H,
 \; \forall f, g \in L^2(\mu) \times \H.
 $$
-This allows to use proprieties of the scalar product of $\H$ for functions
+This allows to use properties of the scalar product of $\H$ for functions
 defined in $L^2(\mu)$ and to show that, if $k$ is also in the Stein class
 of $\mu$ (see \ref{pro:phi-Smu}):
 \begin{equation}
